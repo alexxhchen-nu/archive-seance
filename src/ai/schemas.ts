@@ -25,6 +25,22 @@ export const PROBE_SCHEMA = {
   required: ['ok']
 } as const;
 
+export const PAIR_LABEL_SCHEMA = {
+  type: 'object',
+  properties: { pairs: { type: 'array', items: { type: 'object', properties: {
+    pairId:    { type: 'string' },
+    label:     { type: 'string', enum: ['employed-by','member-of','family','business-partner','met-with','communicated-with','mentioned-together','none'] },
+    snippetId: { type: 'string' }
+  }, required: ['pairId', 'label', 'snippetId'] } } },
+  required: ['pairs']
+} as const;
+
+export const VERDICT_SCHEMA = {
+  type: 'object',
+  properties: { verdict: { type: 'string', enum: ['same', 'different', 'unsure'] } },
+  required: ['verdict']
+} as const;
+
 export type SdkResponseSchema = NonNullable<GenerationConfig['responseSchema']>;
 
 /**

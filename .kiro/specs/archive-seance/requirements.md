@@ -187,7 +187,7 @@ Acceptance criteria:
 
 Acceptance criteria:
 1. THE REPOSITORY SHALL be public on GitHub, include an `LICENSE` file with Apache-2.0 detectable by GitHub, and contain `/.kiro` at its root with specs, steering and hooks committed.
-2. THE REPOSITORY SHALL contain `docs/PRIOR_ART.md` stating: all code was written on or after 2026-10-30; the project reuses no code from the author's earlier work; the Zenodo preprint (DOI 10.5281/zenodo.23962378) is cited only for ideas; and listing any exception.
+2. THE REPOSITORY SHALL contain `docs/PRIOR_ART.md` stating: all code was written on or after 2026-10-30; the project reuses no code from the author's earlier work, with no exceptions; no external papers, preprints, or projects were used as references; the author's own Zenodo preprint (DOI 10.5281/zenodo.23962378) is not used as a reference or a source of ideas; and listing the third-party libraries.
 3. THE REPOSITORY SHALL contain `NOTICE`/`THIRD_PARTY.md` listing third-party libraries and licenses.
 4. THE REPOSITORY SHALL demonstrate Firebase AI Logic being imported and called at runtime (`src/ai/firebase.ts`, `src/ai/models.ts`). The README SHALL name the file and function of the runtime call, not only the directory.
 5. THE DEMO fixtures SHALL be neutral public archives with no sensitive cases and no personal data of private individuals, with source URLs recorded in `docs/DEMO_SOURCES.md`.

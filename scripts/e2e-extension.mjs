@@ -2,7 +2,7 @@
 // Usage: node scripts/e2e-extension.mjs [--shots <dir>]
 // Needs: `npm run build` and `npm run build:mock` first, and a Chromium that Playwright can find.
 import { chromium } from 'playwright-core';
-import { mkdtempSync, mkdirSync, existsSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -47,6 +47,36 @@ async function open(ctx, id, query = '') {
 const text = (page, id) => page.locator(`[data-testid="${id}"]`).innerText();
 const shot = async (page, name) => { if (shotsDir) await page.screenshot({ path: join(shotsDir, name), fullPage: true }); };
 
+const expectedFixtures = JSON.parse(readFileSync(resolve('test/fixtures/fixtures.expected.json'), 'utf8'));
+
+// Local-file flow; proves the bundled pdf.js worker loads under the MV3 CSP. No permission prompt involved.
+async function pdfChecks(ctx, id, flavor) {
+  const { page, errors } = await open(ctx, id);
+  const input = page.locator('[data-testid="pdf-file-input"]');
+  const noText = page.locator('[data-testid="pdf-no-text-page"]');
+  for (const name of ['mixed-scanned.pdf', 'harbor-lantern-minutes.pdf']) {
+    const exp = expectedFixtures[name];
+    await input.setInputFiles(resolve('test/fixtures', name));
+    await page.waitForFunction((t) => document.querySelector('[data-testid="pdf-title"]')?.textContent === t, name, { timeout: 20000 });
+    const pages = (await text(page, 'pdf-pages')).trim();
+    check(`pdf: ${flavor}/${name} pages`, pages === `Pages: ${exp.pages}`, pages);
+    const chunks = (await text(page, 'pdf-chunks')).trim();
+    check(`pdf: ${flavor}/${name} chunks`, chunks === `Chunks: ${exp.chunkCountAtDefaultMax}`, chunks);
+    const nt = (await noText.allInnerTexts()).map((t) => t.trim());
+    const want = exp.noTextPages.map((n) => `Page ${n}: This page looks scanned (no text layer)`);
+    check(`pdf: ${flavor}/${name} no-text entries`, JSON.stringify(nt) === JSON.stringify(want), JSON.stringify(nt));
+    await shot(page, `pdf-${flavor}-${name}.png`);
+  }
+  await input.setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('plain notes, not a pdf') });
+  const err = page.locator('[data-testid="pdf-error"]');
+  await err.waitFor({ state: 'visible', timeout: 10000 });
+  const msg = await err.innerText();
+  check(`pdf: ${flavor} non-PDF shows error`, /not a PDF/i.test(msg), msg);
+  check(`pdf: ${flavor} non-PDF clears counts`, (await page.locator('[data-testid="pdf-pages"], [data-testid="pdf-chunks"]').count()) === 0);
+  check(`pdf: ${flavor} no page/console errors`, errors.length === 0, errors.join(' | '));
+  await page.close();
+}
+
 // 1) Mock flavor: scripted Firebase AI Logic layer
 await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
   check('mock: service worker registered', sw.url().endsWith('/background/sw.js'), sw.url());
@@ -85,6 +115,8 @@ await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
   check('mock/downloadable: Enable on-device AI -> chip becomes available', true);
   await shot(page, 'mock-downloadable-enabled.png');
   await page.close();
+
+  await pdfChecks(ctx, id, 'mock');
 });
 
 // 2) Real build, no Firebase config: must render and explain what is missing, never call out
@@ -99,6 +131,9 @@ await withExtension(resolve('dist'), async (ctx, id) => {
   }
   await shot(page, 'real-no-config.png');
   check('real: no page errors', errors.length === 0, errors.join(' | '));
+  await page.close();
+
+  await pdfChecks(ctx, id, 'real');
 });
 
 const failed = results.filter((r) => !r.ok);

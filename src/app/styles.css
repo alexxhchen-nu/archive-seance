@@ -27,3 +27,4 @@ pre { white-space: pre-wrap; font-size: 0.8rem; color: var(--muted); }
 .error { color: var(--bad); }
 footer { margin-top: 1.5rem; font-style: italic; }
 .badge.cloud { color: var(--cloud); }
+.warn { color: var(--accent); }
