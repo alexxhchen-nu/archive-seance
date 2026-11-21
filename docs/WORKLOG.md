@@ -22,9 +22,16 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
   - `FC_NUM_RUNS=3000 vitest run test/property` passed 10 times in a row after the clustering fix.
   - No live model call was made in tests. No live cloud run was made for this PR: the extraction pipeline is not wired into the extension UI until T20, so the real build cannot run it.
 - **Who:** Grok Workhorse via Kilo wrote the code in two tasks (`wh-20261121-102114-46a5`: T16, T18; `wh-20261121-103221-5744`: T17, T17a), both verdict `success`. Grok Bot reviewed the diffs, found the monotonicity defect through a flaky test, replaced the algorithm, added the regression test, wrote PBT_FINDINGS, EVAL.md, the design and tasks edits, and verified on a fresh clone.
-- **Open items**
+- **Open items** (from the first push)
   - T19: recreate the hook in Kiro and take the screenshot (Alex). T20 (console demo, M1) is next.
-  - Questions for Alex are in the PR description (design 7.3 wording, R4.3 vs 5.2 budget rule, cross-page `local_only`, R17.1 fixture source, extra name-in-quote check, T15 tick).
+  - Questions 4 and 5 (eval fixture source / gold review) still wait on Alex. R17 and the eval labels were not changed for those.
+
+- **Follow-up, same day (still PR #5), after Bloks answered the other spec questions**
+  - Applied Bloks's spec patch `spec-pr5.patch`. `design.md` applied cleanly. `requirements.md` and `tasks.md` needed a hand merge: R13.2 and T06 already had the later "preprint is not a reference" wording, which was kept instead of the patch's shorter replacement; existing ticks, the T17a synthetic-fixture note, and the design §4.2 `DB_VERSION` / `RECORD_VERSION` note were kept. There is no `PRD.md` in the repo. Q6 no longer mentions a "Zenodo problem". T15 was reworded so the R4.8 retry may live in `runExtraction`, and ticked.
+  - §7.3 is now hierarchical complete linkage. `cluster.ts` now uses −∞ for a user-split pair and breaks linkage ties by the smallest sorted member ids of the merged group. Property 3a is a named test ("lowering `mergeGhostThreshold` never splits an existing cluster"); property 4 still covers both monotonicity claims in 7.6.4. R4.3 (budget only on long documents) and R4.5 (`local_only` with no device model → blocked) already matched; named router tests were tightened.
+  - R3.4a: an entity is dropped (and `droppedUnanchored++`) if its name does not appear in the located quote after whitespace and case normalization. Relations still only need a locatable quote. Unit, property, and gold-harness tests cover this. No `gold.json` entry was rewritten: 10 of 42 mentions contain only an alias, not the canonical name; the harness now emits that alias so the name-in-quote check passes, and a new consistency test requires name or alias in every mention quote.
+  - Tests (fresh clone, `npm ci` first): see the updated PR description.
+
 
 ---
 
