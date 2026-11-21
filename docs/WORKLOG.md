@@ -5,9 +5,9 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
-## 2026-11-21 — Follow-up PR: persist the page index (R2.4) and bundle pdf.js font data
+## 2026-11-21 — PR #4: persist the page index (R2.4) and bundle pdf.js font data (open, not merged)
 
-- **PR:** (URL filled after the PR is opened.) Branch `t11-t14-pdf-pipeline`, from main `9b2b876` (PR #3 already merged). Not merged, not pushed to main.
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/4. Branch `t11-t14-pdf-pipeline`, from main `9b2b876` (PR #3 already merged). Not merged, not pushed to main.
 - **What was done**
   - IndexedDB database `seance` (schema version 1) stores `documents`, `pages` and `chunks`, keyed by the SHA-256 of the PDF bytes. Title and source URL or filename are stored as metadata. `getIndex` misses if the record is partial or the schema version differs; `putIndex` writes in one transaction; `clearDocument`, `clearAll` and `evictOldest` are exported. There is no automatic eviction cap (the spec does not define one). PDF bytes are not stored. Nothing is written to `chrome.storage.sync`.
   - `loadAndIndex` reads the cache after hashing; a hit skips pdf.js parse/index/chunk and returns `fromCache: true`. A changed file has a new hash, so it is re-indexed. Cache read or write errors fall back to a normal index so a broken IndexedDB cannot block opening a PDF.
