@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Archive Séance",
+  "version": "0.1.0",
+  "description": "Turn public-archive PDFs into a source-linked network. On-device first.",
+  "minimum_chrome_version": "139",
+  "action": { "default_title": "Open in Archive Séance" },
+  "background": { "service_worker": "background/sw.js", "type": "module" },
+  "permissions": ["storage", "unlimitedStorage", "contextMenus", "activeTab"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}

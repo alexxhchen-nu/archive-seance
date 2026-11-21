@@ -5,4 +5,6 @@ This list is filled in as dependencies are added (see `package.json` and `packag
 
 | Package | Use | License |
 |---|---|---|
-| _(none yet)_ | | |
+| firebase | Firebase AI Logic (hybrid inference), App Check | Apache-2.0 |
+
+Dev dependencies (not shipped): typescript, vite, vitest, fast-check, jsdom, playwright-core, @types/chrome — MIT or Apache-2.0.
