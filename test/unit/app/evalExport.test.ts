@@ -41,4 +41,9 @@ describe('runEvalExport', () => {
     const other = [page(1, 'Ada Vole spoke.', 'abcd'), page(2, 'Nothing here.', 'abcd')];
     await expect(runEvalExport({ pageTexts: other, chunkList: other.map(chunk) }, 'local-only', deps)).rejects.toThrow(/SHA-256 mismatch/);
   });
+
+  it('refuses to export a local-only run that made no model calls', async () => {
+    const blocked = { ...deps, env: () => ({ localAvailability: 'unavailable' as const, online: true, localChunksUsed: 0 }) };
+    await expect(runEvalExport(doc, 'local-only', blocked)).rejects.toThrow(/no model calls/);
+  });
 });

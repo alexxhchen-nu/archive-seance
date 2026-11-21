@@ -41,6 +41,13 @@ export async function runEvalExport(doc: { pageTexts: PageText[]; chunkList: Chu
     { cfg, model: deps.model, env: deps.env }
   );
   const wallClockMs = Math.round(clock() - t0);
+  const modelCalls = result.log.filter((l) => l.inferenceSource === 'on_device' || l.inferenceSource === 'in_cloud').length;
+  if (result.aborted || modelCalls === 0) {
+    throw new Error(
+      'Eval extraction made no model calls (on-device model may be unavailable, or the run was aborted). ' +
+      'Enable on-device AI and retry. Cloud-routed chunks are not extracted yet, so a cloud-enabled export also needs a local model. Nothing was exported.'
+    );
+  }
   return buildPredictions(result, {
     fixtureId: NHPRC_FIXTURE_ID, mode, flavor: deps.flavor, gitSha: deps.gitSha,
     timestamp: now().toISOString(), wallClockMs, mergeCfg: cfg

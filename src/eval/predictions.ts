@@ -97,6 +97,9 @@ export function validatePredictions(raw: unknown, goldFixtureId: string): Valida
   if (!isObj(src) || !SOURCES.every((k) => Number.isInteger(src[k]) && (src[k] as number) >= 0)) {
     return { ok: false, error: 'inferenceSource must have integer counts for on_device, in_cloud, failed' };
   }
+  if ((src.on_device as number) + (src.in_cloud as number) < 1) {
+    return { ok: false, error: 'predictions have no on_device or in_cloud model calls; refusing to score a run that did not infer' };
+  }
   if (!Array.isArray(raw.entities)) return { ok: false, error: 'entities must be an array' };
   for (const [i, e] of raw.entities.entries()) {
     if (!isObj(e) || !isStr(e.label) || typeof e.type !== 'string' || !TYPES.includes(e.type) || !Array.isArray(e.mentions)) {

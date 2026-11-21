@@ -15,8 +15,8 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
   - `scripts/eval.mjs`: R17.1a gate first (exit 1), then no `--predictions` exits 2 with export instructions, invalid file exits 3, mock run exits 4, else scores and writes rows. `EVAL_GOLD_PATH` kept; `EVAL_MD_PATH` added so tests use temp copies.
   - `docs/EVAL.md`: added “How to measure”.
 - **Narrow interpretations (no spec change):** entity scoring uses every exported mention surface (as the existing harness test does), not only merged labels. “cloud-enabled” sets `cloudEnabled: true` for routing, but `runExtraction` still only runs local chunks (cloud chunks are counted as pending-cloud) because the cloud extraction path is not built yet. Timing is wall-clock of the extraction call only (excludes PDF load/index). Export refuses a PDF whose SHA-256 is not the NHPRC file in `docs/DEMO_SOURCES.md`. Measurement dates are written in America/Chicago.
-- **Tests (fresh clone `/tmp/as-verify-t37a` at `f6019d4`):** typecheck, lint, `npm test` 747 passed / 1 skipped, `npm run build`, `npm run build:mock`, e2e 55/55, `check:secrets`, `check:bundle-rhc`. No accuracy numbers written; T37 still unticked.
-- **Who:** Grok Workhorse (implementation); Grok Bot (review: SHA check, Chicago date, EVAL.md cloud-path note; verification).
+- **Tests:** typecheck, lint, `npm test` 749 passed / 1 skipped after the review follow-up (fresh clone of `f6019d4` had been 747 passed / 1 skipped, plus builds, e2e 55/55, `check:secrets`, `check:bundle-rhc`). No accuracy numbers written; T37 still unticked.
+- **Who:** Grok Workhorse (implementation); Grok Bot (review: SHA check, Chicago date, EVAL.md cloud-path note, refuse no-inference exports, mock export uses the controller probe; verification).
 
 ## 2026-11-21 — PR #6 follow-up: Alex reviewed the NHPRC gold
 

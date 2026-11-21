@@ -6,7 +6,6 @@ import { loadAndIndex } from './loadAndIndex';
 import type { IndexSummary } from './loadAndIndex';
 import { downloadPredictions, runEvalExport } from './evalExport';
 import type { GenerateLike } from '../ai/call';
-import { probeOnDevice } from '../ai/availability';
 import { DEFAULTS } from '../config/defaults';
 import { loadPdfFromFile, loadPdfFromUrl, requestHostPermission } from '../pdf/loadPdf';
 import { openPdf } from '../pdf/openPdf';
@@ -51,7 +50,7 @@ async function boot(): Promise<void> {
       ...ctl,
       exportEval: async (mode) => {
         if (!lastIndexed) throw new Error('Open the NHPRC PDF before exporting an eval run.');
-        const { availability } = await probeOnDevice();
+        const { availability } = await ctl.probeAvailability();
         return runEvalExport(lastIndexed, mode, {
           cfg: DEFAULTS, model: evalModel(), flavor, gitSha: typeof sha === 'string' && sha ? sha : null,
           env: () => ({ localAvailability: availability, online: navigator.onLine, localChunksUsed: 0 })

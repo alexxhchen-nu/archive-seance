@@ -104,6 +104,11 @@ describe('validatePredictions', () => {
     const v = validatePredictions(synthetic({ build: { flavor: 'mock', gitSha: null } }), FIXTURE);
     expect(v).toMatchObject({ ok: false, mock: true });
   });
+  it('refuses a file with no on_device or in_cloud calls', () => {
+    const v = validatePredictions(synthetic({ inferenceSource: { on_device: 0, in_cloud: 0, failed: 2 } }), FIXTURE);
+    expect(v.ok).toBe(false);
+    if (!v.ok) expect(v.error).toContain('no on_device or in_cloud');
+  });
   it('rejects schema errors', () => {
     const bad: unknown[] = [
       null, [], { ...synthetic(), schema: 'x' }, { ...synthetic(), build: undefined }, { ...synthetic(), mode: 'hybrid' },
