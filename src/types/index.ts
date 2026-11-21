@@ -78,7 +78,7 @@ export interface ScoreBreakdown {
   name: number;               // 0..1
   context: number;            // 0..1
   verdict: number | null;     // 0, 0.5, 1 or null if no model verdict
-  capped?: 'suffix-conflict' | 'initial-conflict' | 'verdict-different' | 'auto-needs-name>=0.90';
+  capped?: 'suffix-conflict' | 'initial-conflict' | 'verdict-different' | 'auto-needs-name>=0.90' | 'type-mismatch';
   total: number;              // 0..1
 }
 

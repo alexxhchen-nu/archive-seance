@@ -9,6 +9,8 @@ export interface Config {
   maxPdfMegabytes: number;
   maxPdfPages: number;
   minTextCharsPerPage: number;
+  mergeAutoThreshold: number;
+  mergeGhostThreshold: number;
 }
 
 export const DEFAULTS: Readonly<Config> = Object.freeze({
@@ -21,5 +23,7 @@ export const DEFAULTS: Readonly<Config> = Object.freeze({
   crossPageMode: 'cloud_first',
   maxPdfMegabytes: 50,
   maxPdfPages: 500,
-  minTextCharsPerPage: 40
+  minTextCharsPerPage: 40,
+  mergeAutoThreshold: 0.92,
+  mergeGhostThreshold: 0.6
 });
