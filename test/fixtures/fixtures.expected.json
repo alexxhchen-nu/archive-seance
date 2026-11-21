@@ -12,5 +12,17 @@
     ],
     "chunkCountAtDefaultMax": 2,
     "chunkCountAtMax400": 2
+  },
+  "times-roman-plain.pdf": {
+    "pages": 1,
+    "noTextPages": [],
+    "chunkCountAtDefaultMax": 1,
+    "chunkCountAtMax400": 1
+  },
+  "cjk-unigb.pdf": {
+    "pages": 1,
+    "noTextPages": [],
+    "chunkCountAtDefaultMax": 1,
+    "chunkCountAtMax400": 1
   }
 }

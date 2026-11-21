@@ -11,6 +11,15 @@ See `package.json` and `package-lock.json` for exact versions. Licenses below ar
 | pdfjs-dist | PDF parsing and text extraction; its worker is bundled locally (no CDN) | Apache-2.0 |
 | d3 | Force-directed graph view (pinned; not imported yet) | ISC |
 
+### pdf.js data files copied at build time
+
+The Vite build copies three folders from `node_modules/pdfjs-dist` into `<outDir>/pdfjs/` (they are not
+committed to this repository). We do not relicense them; each keeps the license shipped next to it:
+
+- `standard_fonts/`: Foxit and Liberation fonts (see `LICENSE_FOXIT` and `LICENSE_LIBERATION` in that folder).
+- `cmaps/`: Adobe CMap resources, distributed with pdfjs-dist.
+- `wasm/`: OpenJPEG, JBIG2, QCMS and QuickJS builds (see the `LICENSE_*` files in that folder).
+
 ## Development only (not shipped)
 
 | Package | License |
@@ -20,3 +29,4 @@ See `package.json` and `package-lock.json` for exact versions. Licenses below ar
 | vite, vitest, fast-check, jsdom | MIT |
 | eslint, @eslint/js, typescript-eslint, globals | MIT |
 | @types/chrome | MIT |
+| fake-indexeddb (unit tests) | Apache-2.0 |

@@ -5,9 +5,35 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
-## 2026-11-21 — PR #3: T11–T14 PDF pipeline, demo sources, prior art (open, not merged)
+## 2026-11-21 — PR #4: persist the page index (R2.4) and bundle pdf.js font data (open, not merged)
 
-- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/3 (branch `t11-t14-pdf-pipeline`, from `0668c3c`).
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/4. Branch `t11-t14-pdf-pipeline`, from main `9b2b876` (PR #3 already merged). Not merged, not pushed to main.
+- **What was done**
+  - IndexedDB database `seance` (schema version 1) stores `documents`, `pages` and `chunks`, keyed by the SHA-256 of the PDF bytes. Title and source URL or filename are stored as metadata. `getIndex` misses if the record is partial or the schema version differs; `putIndex` writes in one transaction; `clearDocument`, `clearAll` and `evictOldest` are exported. There is no automatic eviction cap (the spec does not define one). PDF bytes are not stored. Nothing is written to `chrome.storage.sync`.
+  - `loadAndIndex` reads the cache after hashing; a hit skips pdf.js parse/index/chunk and returns `fromCache: true`. A changed file has a new hash, so it is re-indexed. Cache read or write errors fall back to a normal index so a broken IndexedDB cannot block opening a PDF.
+  - The app shows `Served from cache` (`data-testid="pdf-cached"`) only on a hit, and has a "Clear cached documents" button.
+  - The Vite build copies `pdfjs-dist` `standard_fonts`, `cmaps` and `wasm` (with their LICENSE files) into `<outDir>/pdfjs/`. `openPdf` passes `standardFontDataUrl`, `cMapUrl`, `cMapPacked: true` and `wasmUrl` (via `chrome.runtime.getURL` in the extension; filesystem paths in Node tests). The manifest was not given `web_accessible_resources`; e2e confirmed the files load under the MV3 CSP.
+  - New synthetic fixtures: `times-roman-plain.pdf` (Times-Roman, not embedded) and `cjk-unigb.pdf` (Type0 / UniGB-UTF16-H, no embedded font, no ToUnicode; CMap alone is enough to extract 港湾灯笼…).
+  - `fake-indexeddb` 6.2.8 added as a devDependency. THIRD_PARTY.md, design.md §4.2 (raw wrapper instead of the `idb` library; `chunks` store), structure.md and ticked T13b in tasks.md. T17 is still open (mentions).
+  - Review fix: the e2e cache check now waits for "Cleared cached documents." before reloading, so the second clear cannot race the reload.
+- **Tests and results** (working clone; fresh-clone results are in the PR description)
+  - typecheck, lint, build, `build:mock`, `check:secrets`, `check:bundle-rhc` pass.
+  - `npm test` **148/148** in 21 files (119 existing, 29 new). The `standardFontDataUrl` warning is gone when the data URLs are set.
+  - `npm run e2e` **55/55** (35 existing plus font and cache checks in both the mock and real builds). After a reload, the second load of `mixed-scanned.pdf` shows "Served from cache"; after clear and reload it does not.
+  - Bundle size: `dist` is 5,168,359 bytes of files (~4.93 MiB; `du` reports 5.6M). Of that, `dist/pdfjs` is 3,354,280 bytes (~3.20 MiB): standard_fonts 798,046; cmaps 1,167,747; wasm 1,388,487. The worker is unchanged at 1,271,915 bytes. `app/index.js` went from 460.32 kB to 463.61 kB (~3 kB).
+- **Who:** Grok Workhorse via Kilo (task `wh-20261121-100024-1f8d`, verdict `success`) wrote the code, tests, fixtures and e2e script. It could not run `npm ci` or Chromium. Grok Bot added the `fake-indexeddb` pin, reviewed the diff, fixed the e2e clear/reload race, switched the Vite config off `__dirname`, ran the full verification, and opened the PR.
+- **Open items**
+  - R2.4 mentions are still T17. `evictOldest` is not called automatically.
+  - Remote PDF / permission flow in real Chrome is still untested (unchanged).
+  - pdf.js may still extract less text from some unusual CJK fonts; the new fixture covers a CMap-decoded Type0 font, not a scanned page and not every CJK encoding.
+  - T05, T08, T09, and `design.md` Q6 wording remain open.
+
+---
+
+
+## 2026-11-21 — PR #3: T11–T14 PDF pipeline, demo sources, prior art (merged later the same day)
+
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/3 (branch `t11-t14-pdf-pipeline`, from `0668c3c`; Alex merged it onto main as `9b2b876`).
 - **What was done**
   - T11: the design section 4 types, the three message types, `PAIR_LABEL_SCHEMA` and `VERDICT_SCHEMA`, and hand-written validators (`src/ai/validateSchema.ts`, `src/ai/validators.ts`). They return path-bearing errors, accept an object or a JSON string, and never throw.
   - T12: `src/pdf/loadPdf.ts` (file and URL loading, 50 MB limit checked before reading and while streaming, `%PDF-` header check, per-origin host-permission flow that never calls `fetch` without permission), `src/util/hash.ts` (SHA-256), `src/pdf/openPdf.ts` (pdf.js with the worker bundled locally under `dist/assets`), and an "Open local PDF" panel with the "Allow access to <origin>" button.

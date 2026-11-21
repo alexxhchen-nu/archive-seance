@@ -13,6 +13,7 @@ src/pdf/                       loadPdf, pageIndex, chunker, spanMapper
 src/pipeline/                  runExtraction, locateQuote, candidatePairs, runCrossPage
 src/ai/                        firebase, models, schemas, prompts, router, availability, call
 src/privacy/                   redact, pseudonymize, payload, outboundLog
+src/storage/                   IndexedDB `seance` cache (schema, openDb, indexCache)
 src/graph/                     similarity, confidence, cluster, merge, toGraph
 src/config/                    defaults, remoteConfig, validate
 src/types/                     shared types and message types
