@@ -4,7 +4,7 @@ Please review this gold set before any measured run (T37 / R17). Budget **20–3
 
 **Source:** [NHPRC Executive Summary Minutes, 6 November 2015](https://www.archives.gov/files/nhprc/about/meetings/2015-11-minutes.pdf), pages 1–2. US federal work, public domain under 17 U.S.C. § 105.
 
-**Status:** AI-drafted on 2026-11-21. `reviewedBy` and `reviewedAt` in `test/fixtures/eval/nhprc-2015-11/gold.json` are `null` until you finish.
+**Status:** AI-drafted on 2026-11-21. **Reviewed by Alex Chen on 2026-11-21: all items kept, no edits** (`reviewedBy` / `reviewedAt` set in `test/fixtures/eval/nhprc-2015-11/gold.json`).
 
 ## How to mark the tables
 

@@ -1,5 +1,7 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, statSync } from 'node:fs';
+import { mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { isGoldReviewed, UNREVIEWED_REFUSAL } from '../../../src/eval/reviewGate';
 
@@ -21,27 +23,43 @@ describe('isGoldReviewed (R17.1 / R17.1a)', () => {
 });
 
 describe('npm run eval (R17.1a)', () => {
-  it('refuses to write accuracy numbers while the committed gold is unreviewed', () => {
-    const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as { reviewedBy: string | null; reviewedAt: string | null };
-    expect(gold.reviewedBy).toBeNull();
-    expect(gold.reviewedAt).toBeNull();
-    expect(isGoldReviewed(gold)).toBe(false);
+  function runEval(env: Record<string, string> = {}): { status: number; stderr: string } {
+    try {
+      execFileSync('npm', ['run', 'eval'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, ...env } });
+      return { status: 0, stderr: '' };
+    } catch (e) {
+      const err = e as { status?: number | null; stderr?: string };
+      return { status: err.status ?? 1, stderr: err.stderr ?? '' };
+    }
+  }
+
+  it('refuses to write accuracy numbers while the gold is unreviewed', () => {
+    const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as Record<string, unknown>;
+    const unreviewed = { ...gold, reviewedBy: null, reviewedAt: null };
+    expect(isGoldReviewed(unreviewed)).toBe(false);
+    const dir = mkdtempSync(join(tmpdir(), 'seance-eval-'));
+    const path = join(dir, 'gold.json');
+    writeFileSync(path, JSON.stringify(unreviewed));
 
     const before = readFileSync(EVAL_MD, 'utf8');
     const mtime = statSync(EVAL_MD).mtimeMs;
-    let status = 0;
-    let stderr = '';
-    try {
-      execFileSync('npm', ['run', 'eval'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-    } catch (e) {
-      const err = e as { status?: number | null; stderr?: string };
-      status = err.status ?? 1;
-      stderr = err.stderr ?? '';
-    }
+    const { status, stderr } = runEval({ EVAL_GOLD_PATH: path });
     expect(status).toBe(1);
     expect(stderr).toContain('will not write accuracy numbers');
     expect(stderr).toContain('R17.1a');
     expect(stderr).toContain(UNREVIEWED_REFUSAL.slice(0, 40));
+    expect(readFileSync(EVAL_MD, 'utf8')).toBe(before);
+    expect(statSync(EVAL_MD).mtimeMs).toBe(mtime);
+  });
+
+  it('with the committed (reviewed) gold, still writes no numbers until T37 wires the comparison', () => {
+    const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as Record<string, unknown>;
+    expect(isGoldReviewed(gold)).toBe(true);
+    const before = readFileSync(EVAL_MD, 'utf8');
+    const mtime = statSync(EVAL_MD).mtimeMs;
+    const { status, stderr } = runEval();
+    expect(status).toBe(2);
+    expect(stderr).toContain('not wired yet (T37)');
     expect(readFileSync(EVAL_MD, 'utf8')).toBe(before);
     expect(statSync(EVAL_MD).mtimeMs).toBe(mtime);
     expect(before).toMatch(/not yet measured/i);

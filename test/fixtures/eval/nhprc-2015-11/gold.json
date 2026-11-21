@@ -12,9 +12,9 @@
     "license": "US government work, public domain in the United States under 17 U.S.C. § 105"
   },
   "textSource": "public-domain-quotes",
-  "labeling": "AI-drafted by Grok Bot on 2026-11-21 from pages 1–2 of the source PDF (pdf.js page text). Pending human review by Alex. Do not use for measured EVAL numbers until reviewed.",
-  "reviewedBy": null,
-  "reviewedAt": null,
+  "labeling": "AI-drafted on 2026-11-21; reviewed by Alex Chen on 2026-11-21 (all items kept, no edits).",
+  "reviewedBy": "Alex Chen",
+  "reviewedAt": "2026-11-21",
   "entities": [
     {
       "id": "david-s-ferriero",

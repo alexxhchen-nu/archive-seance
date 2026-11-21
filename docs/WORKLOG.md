@@ -5,6 +5,13 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — PR #6 follow-up: Alex reviewed the NHPRC gold
+
+- **What was done:** Alex reviewed `docs/eval/NHPRC_GOLD_REVIEW.md` and answered “全部keep” (keep all items, no edits). `gold.json` now has `reviewedBy: "Alex Chen"`, `reviewedAt: "2026-11-21"` and an updated `labeling` line. `docs/EVAL.md` checklist and the review sheet status were updated. `scripts/eval.mjs` accepts `EVAL_GOLD_PATH` so the R17.1a refusal test runs against an unreviewed temp copy; a second test checks that with the reviewed gold, `npm run eval` exits 2 (comparison not wired until T37) and leaves `docs/EVAL.md` unchanged.
+- **Tests:** typecheck, lint, `npm test` 720 passed / 1 skipped. No accuracy numbers written; T37 still unticked.
+- **Who:** Alex (review), Grok Bot (edits).
+- **Open items:** T37 can now measure once the comparison pass is wired.
+
 ## 2026-11-21 — PR #6: NHPRC gold draft for T17a / R17.1, eval review gate (open, not merged)
 
 - **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/6. Branch `t17a-nhprc-gold`, from main `eda1d25` (PR #5 already merged). Not merged, not pushed to main.

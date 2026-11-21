@@ -4,7 +4,7 @@
 // itself is T37 and is not run here.
 import { readFileSync } from 'node:fs';
 
-const GOLD_PATH = 'test/fixtures/eval/nhprc-2015-11/gold.json';
+const GOLD_PATH = process.env.EVAL_GOLD_PATH || 'test/fixtures/eval/nhprc-2015-11/gold.json';
 
 function isGoldReviewed(gold) {
   return typeof gold.reviewedBy === 'string' && gold.reviewedBy.trim() !== '' &&

@@ -7,19 +7,20 @@ NHPRC gold set has been reviewed (R17.1a).
 
 ## Fixtures
 
-- **Measured gold (unreviewed):** short quotes from pages 1–2 of the NHPRC Executive Summary
+- **Measured gold (reviewed):** short quotes from pages 1–2 of the NHPRC Executive Summary
   Minutes of 6 November 2015, in `test/fixtures/eval/nhprc-2015-11/`. AI-drafted on 2026-11-21.
-  `reviewedBy` and `reviewedAt` are `null`. Review sheet: `docs/eval/NHPRC_GOLD_REVIEW.md`.
-  `npm run eval` will refuse to write accuracy numbers until those fields are set.
+  Reviewed by Alex Chen on 2026-11-21 (all items kept, no edits). Review sheet:
+  `docs/eval/NHPRC_GOLD_REVIEW.md`. `npm run eval` refuses to write accuracy numbers for any
+  gold whose `reviewedBy` / `reviewedAt` are empty.
 - **Smoke test only:** the synthetic fixture `test/fixtures/eval/` (4 pages, 21 entities, 15
   relations). A unit test replays those gold labels through the pipeline and scorer to check
   the harness. That fixture is **not** used for numbers in this file.
 
 ## Author review (R17.1 / R17.1a)
 
-- [ ] Alex has reviewed `docs/eval/NHPRC_GOLD_REVIEW.md` (about 20–30 minutes).
-- [ ] Fixes from the review are in `test/fixtures/eval/nhprc-2015-11/gold.json`.
-- [ ] `reviewedBy` and `reviewedAt` are set in that file.
+- [x] Alex has reviewed `docs/eval/NHPRC_GOLD_REVIEW.md` (2026-11-21: all items kept).
+- [x] Fixes from the review are in `test/fixtures/eval/nhprc-2015-11/gold.json` (none needed).
+- [x] `reviewedBy` and `reviewedAt` are set in that file.
 - [ ] Only then may T37 run `npm run eval` and write real numbers below.
 
 | Measurement | Value | Fixture | Date | Machine | Git SHA |

@@ -27,17 +27,17 @@ const pages = JSON.parse(readFileSync('test/fixtures/eval/nhprc-2015-11/pages.js
 const pageText = (n: number): string => pages.text[String(n)] ?? '';
 
 describe('NHPRC eval gold (pages 1–2)', () => {
-  it('is AI-drafted, unreviewed, and points at the DEMO_SOURCES PDF', () => {
+  it('is AI-drafted, reviewed by the author (R17.1), and points at the DEMO_SOURCES PDF', () => {
     expect(gold.fixtureId).toBe('nhprc-2015-11-p1-p2');
     expect(gold.source.pages).toEqual([1, 2]);
     expect(gold.source.url).toMatch(/2015-11-minutes\.pdf$/);
     expect(gold.source.sha256).toBe(pages.sha256);
     expect(gold.source.sha256).toMatch(/^[0-9a-f]{64}$/);
     expect(gold.labeling).toMatch(/AI-drafted/i);
-    expect(gold.labeling).toMatch(/pending human review/i);
-    expect(gold.reviewedBy).toBeNull();
-    expect(gold.reviewedAt).toBeNull();
-    expect(isGoldReviewed(gold)).toBe(false);
+    expect(gold.labeling).toMatch(/reviewed by Alex Chen/i);
+    expect(gold.reviewedBy).toBe('Alex Chen');
+    expect(gold.reviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(isGoldReviewed(gold)).toBe(true);
     expect(pages.pagesSelected).toEqual([1, 2]);
     expect(pageText(1).length).toBeGreaterThan(1000);
     expect(pageText(2).length).toBeGreaterThan(1000);
