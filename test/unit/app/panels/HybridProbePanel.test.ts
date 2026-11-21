@@ -2,6 +2,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { mountHybridProbePanel } from '../../../../src/app/panels/HybridProbePanel';
 import type { ProbeController } from '../../../../src/app/panels/HybridProbePanel';
+import type { EvalMode, Predictions } from '../../../../src/eval/predictions';
 import type { HybridModeName, InferenceSourceTag } from '../../../../src/types';
 
 const q = (root: HTMLElement, id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`)!;
@@ -70,5 +71,22 @@ describe('HybridProbePanel', () => {
     q(root, 'btn-run-cloud').click();
     await flush();
     expect(q(root, 'probe-error').textContent).toContain('App Check token rejected');
+  });
+
+  it('hides eval export buttons unless the controller provides exportEval', () => {
+    const root = mount(ctl());
+    expect(root.querySelector('[data-testid="btn-export-eval-local"]')).toBeNull();
+  });
+
+  it('exports an eval run per mode and hands the payload to saveEval', async () => {
+    const payload = { mode: 'cloud-enabled', entities: [], relations: [], wallClockMs: 5 } as unknown as Predictions;
+    const exportEval = vi.fn(async (_m: EvalMode) => payload);
+    const saveEval = vi.fn();
+    const root = mount(ctl({ exportEval, saveEval }));
+    q(root, 'btn-export-eval-cloud').click();
+    await flush();
+    expect(exportEval).toHaveBeenCalledWith('cloud-enabled');
+    expect(saveEval).toHaveBeenCalledWith(payload);
+    expect(q(root, 'eval-export-status').textContent).toContain('Exported cloud-enabled run');
   });
 });

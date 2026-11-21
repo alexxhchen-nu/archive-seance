@@ -1,6 +1,7 @@
 import type { AvailabilityProbe } from '../../ai/availability';
 import type { HybridProbeResult } from '../../ai/hybridProbe';
 import type { HybridModeName } from '../../types';
+import type { EvalMode, Predictions } from '../../eval/predictions';
 import { createStore } from '../state/store';
 
 /** Everything the panel needs; real and scripted wiring both implement it. */
@@ -13,6 +14,10 @@ export interface ProbeController {
   /** Called only from the "Enable on-device AI" click handler. */
   enableDevice(onProgress: (p: number) => void): Promise<void>;
   run(mode: HybridModeName): Promise<HybridProbeResult>;
+  /** Dev export for `npm run eval` (R17.2): runs the extraction pipeline on the open NHPRC PDF. */
+  exportEval?(mode: EvalMode): Promise<Predictions>;
+  /** Saves the exported payload; defaults to nothing so tests can observe it. */
+  saveEval?(p: Predictions): void;
 }
 
 interface PanelState {
@@ -66,6 +71,14 @@ export function mountHybridProbePanel(root: HTMLElement, ctl: ProbeController): 
   const btnHybrid = el('button', { type: 'button', 'data-testid': 'btn-run-hybrid' }, 'Run hybrid (prefer on-device)');
   const btnCloud = el('button', { type: 'button', 'data-testid': 'btn-run-cloud' }, 'Run in cloud only');
   controls.append(btnEnable, progress, btnDevice, btnHybrid, btnCloud);
+  const evalButtons: [HTMLButtonElement, EvalMode][] = ctl.exportEval
+    ? [
+        [el('button', { type: 'button', 'data-testid': 'btn-export-eval-local' }, 'Export eval run (local-only)'), 'local-only'],
+        [el('button', { type: 'button', 'data-testid': 'btn-export-eval-cloud' }, 'Export eval run (cloud-enabled)'), 'cloud-enabled']
+      ]
+    : [];
+  const evalStatus = el('span', { class: 'meta', 'data-testid': 'eval-export-status' });
+  if (evalButtons.length > 0) controls.append(...evalButtons.map(([b]) => b), evalStatus);
   const configNote = el('p', { class: 'note', 'data-testid': 'config-note' });
   if (!ctl.firebaseOk) {
     configNote.textContent =
@@ -98,6 +111,7 @@ export function mountHybridProbePanel(root: HTMLElement, ctl: ProbeController): 
     const disabled = !ctl.firebaseOk || s.busy;
     for (const [b] of runButtons) b.disabled = disabled;
     btnEnable.disabled = disabled;
+    for (const [b] of evalButtons) b.disabled = disabled;
     const r = s.result;
     badge.textContent = r ? (r.source === 'on_device' ? 'Ran on-device' : 'Ran in cloud') : '';
     badge.hidden = !r;
@@ -130,6 +144,23 @@ export function mountHybridProbePanel(root: HTMLElement, ctl: ProbeController): 
       ctl.run(mode)
         .then((result) => store.set({ result }))
         .catch((e: unknown) => store.set({ error: describeError(e) }))
+        .finally(() => store.set({ busy: false }));
+    });
+  }
+
+  for (const [btn, mode] of evalButtons) {
+    btn.addEventListener('click', () => {
+      store.set({ busy: true, error: undefined });
+      evalStatus.textContent = 'Running eval extraction…';
+      (ctl.exportEval as (m: EvalMode) => Promise<Predictions>)(mode)
+        .then((p) => {
+          ctl.saveEval?.(p);
+          evalStatus.textContent = `Exported ${p.mode} run: ${p.entities.length} entities, ${p.relations.length} relations, ${p.wallClockMs ?? '?'} ms.`;
+        })
+        .catch((e: unknown) => {
+          evalStatus.textContent = '';
+          store.set({ error: describeError(e) });
+        })
         .finally(() => store.set({ busy: false }));
     });
   }

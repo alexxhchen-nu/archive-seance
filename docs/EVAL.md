@@ -30,3 +30,27 @@ NHPRC gold set has been reviewed (R17.1a).
 | Entity and relation precision / recall (cloud-enabled) | not yet measured | | | | |
 | Wall-clock, local-only run | not yet measured | | | | |
 | Wall-clock, cloud-enabled run | not yet measured | | | | |
+
+## How to measure (R17.2, R17.3)
+
+The model runs only inside Chrome, so `npm run eval` scores a predictions file exported from a
+real extension run. It never calls a model itself.
+
+1. Build the real extension (not `build:mock`): `npm run build`, then load `dist/` in Chrome
+   with `.env.local` filled in. Exports from the mock build are refused.
+2. Open the official NHPRC PDF (see `docs/DEMO_SOURCES.md`; the extension refuses to export if
+   the file's SHA-256 does not match) in the extension page.
+3. In the probe panel click **Export eval run (local-only)**. For the cloud-enabled row, click
+   **Export eval run (cloud-enabled)**. Each click runs the extraction pipeline on pages 1–2 and
+   downloads a JSON file (fixture id, mode, inference-source counts, entities with page and
+   quote, relations, wall-clock ms, timestamp, build flavor, git SHA). The cloud extraction path
+   is not built yet, so a cloud-enabled export only scores chunks the router sent locally;
+   cloud-routed chunks stay pending-cloud and are omitted.
+4. Score each file:
+   `npm run eval -- --predictions <downloaded-file>.json --machine "<machine name>"`
+5. The command rewrites only the rows for that mode in the table above (plus the wall-clock row),
+   with fixture, date, machine and git SHA. Rerunning the same mode replaces its rows.
+
+Exit codes: 1 gold unreviewed (R17.1a), 2 no `--predictions`, 3 invalid file or fixture
+mismatch, 4 mock-build run. On any non-zero exit this file is not changed.
+
