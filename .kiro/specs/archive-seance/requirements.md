@@ -58,6 +58,7 @@ Acceptance criteria:
 2. THE SYSTEM SHALL ask the model for entities (`name`, `type` in `person|org`, `quote`) and relations (`subject`, `object`, `label`, `quote`), where each `quote` is a verbatim span from the chunk.
 3. WHEN the model returns output, THE SYSTEM SHALL validate it against the schema in code, and SHALL locate every `quote` in the chunk text by exact match, then by whitespace/case-normalized match.
 4. IF a quote cannot be located, THEN THE SYSTEM SHALL discard that item and increment the `droppedUnanchored` counter shown in the run summary.
+4a. IF an entity's `name` does not appear inside its located quote (whitespace/case-normalized match), THEN THE SYSTEM SHALL discard that entity and increment `droppedUnanchored`. Relations need only a located quote.
 5. THE SYSTEM SHALL NOT use model-supplied character offsets; offsets come only from code.
 6. WHILE the on-device model is `downloadable` or `downloading`, THE SYSTEM SHALL show download progress and SHALL call `initializeDeviceModel()` only from a user click.
 7. THE SYSTEM SHALL record, for every inference call, the `inferenceSource` returned by the SDK (`on_device` or `in_cloud`).
@@ -70,9 +71,9 @@ Acceptance criteria:
 Acceptance criteria:
 1. THE SYSTEM SHALL implement routing as one pure function `decideRoute(task, doc, env, config)` returning `local`, `cloud`, or `blocked`, with a human-readable `reason`.
 2. IF `doc.sensitivity` is `sensitive`, THEN THE SYSTEM SHALL return `local` when the on-device model is available and `blocked` otherwise. THE SYSTEM SHALL NEVER return `cloud` for a sensitive document.
-3. IF `doc.sensitivity` is `public` and the task is chunk extraction, THEN THE SYSTEM SHALL return `local` when the on-device model is `available`, the chunk is at most `routeLocalMaxChunkChars`, and the local budget (`routeLocalChunkBudget` chunks) is not exhausted; otherwise `cloud`.
+3. IF `doc.sensitivity` is `public` and the task is chunk extraction, THEN THE SYSTEM SHALL return `local` when the on-device model is `available`, and the chunk is at most `routeLocalMaxChunkChars`, subject to the long-document budget in R4.4; otherwise `cloud`. The local budget applies only to documents with more than `routeLongDocPages` pages.
 4. IF `doc.sensitivity` is `public` and the document has more than `routeLongDocPages` pages, THEN chunks beyond the local budget SHALL go to the cloud route.
-5. IF the task is cross-page relation extraction and `doc.sensitivity` is `public`, THEN THE SYSTEM SHALL return `cloud` (when `cloudEnabled` is true and the browser is online), otherwise `local`.
+5. IF the task is cross-page relation extraction and `doc.sensitivity` is `public`, THEN THE SYSTEM SHALL return `cloud` (when `cloudEnabled` is true and the browser is online), otherwise `local`. IF `crossPageMode` is `local_only`, THEN THE SYSTEM SHALL return `local` when the on-device model is available and `blocked` otherwise; it SHALL NOT fall through to `cloud`.
 6. WHEN a task is an entity-merge adjudication (short, two contexts), THE SYSTEM SHALL return `local` when available, otherwise `cloud` for public documents.
 7. IF `cloudEnabled` is false (kill switch), THEN THE SYSTEM SHALL never return `cloud`.
 8. WHEN a local call throws or times out (`localCallTimeoutMs`, default 45000), THE SYSTEM SHALL retry once; IF the document is public, it SHALL then re-route that single chunk to the cloud; IF sensitive, it SHALL mark the chunk `failed` and continue.
