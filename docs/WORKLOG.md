@@ -5,6 +5,36 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — PR #5: T16 router, T17 local extraction, T17a eval fixture, T18 merge, T19 PBT (open, not merged)
+
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/5. Branch `t16-t19-extraction`, from main `c2ce14a` (PR #4 already merged). Not merged, not pushed to main.
+- **What was done**
+  - T16: `src/ai/router.ts`, pure `decideRoute` (design 5.2). Exhaustive table test against an independent expectation written from R4, plus properties: sensitive never cloud, kill switch never cloud, local only when the device model is available, total and deterministic.
+  - T17: `prompts.ts` (design 5.5 text; the probe now uses it), `src/pipeline/locateQuote.ts` (exact, then whitespace/case/line-end-hyphenation match with an index map), `src/pdf/sentenceStart.ts`, `src/pipeline/runExtraction.ts` (local route only: router per chunk, `callModel`, privacy and mode assertions, schema validation at the model-output boundary, one retry, quotes located in code, `droppedUnanchored`, inference log; a chunk the router sends to the cloud is only counted as `pending-cloud`), and a `mentions` store in IndexedDB (DB version 2; the cached-record version stays 1 so existing caches stay valid; migration tested from a real v1 database).
+  - T17a: synthetic 4-page fixture `test/fixtures/eval/harbor-eval-minutes.pdf` (21 entities, 15 relations, name variants, two people per surname, an abbreviation, a split name, a hyphen split, non-entities), `gold.json`, `src/eval/score.ts`, `docs/EVAL.md` stating "not yet measured". Labels were written by an AI assistant and are not yet reviewed by a human.
+  - T18: `src/graph/{similarity,confidence,cluster,merge}.ts` per design 7, merge thresholds in `DEFAULTS`, the worked-example table as tests, the seven properties of 7.6 plus the R7.8 verdict cap.
+  - T19 (reversible part): `docs/PBT_FINDINGS.md` with one real finding and the hook run with a deliberately broken threshold. The Kiro hook recreation and the screenshot are Alex's, so T19 stays unticked.
+  - Real defect found by property 4: lowering `mergeGhostThreshold` could split a cluster, because the literal greedy algorithm in design 7.3 is not monotone. `cluster.ts` now uses standard hierarchical complete linkage (merge order independent of the thresholds). Details and the shrunk input are in `docs/PBT_FINDINGS.md`; design 7.3 still describes the greedy variant.
+  - design §4.2 updated for `DB_VERSION` 2 / `RECORD_VERSION` 1. Ticked T16, T17, T17a, T18 in tasks.md.
+- **Tests and results** (fresh clone of the PR head, `npm ci` first)
+  - typecheck, lint, build, `build:mock`, `check:secrets` (377 files, history scanned), `check:bundle-rhc` pass.
+  - `npm test` **701/701** in 37 files (148 before this PR). `npm run e2e` **55/55**. `dist` is 5,168,543 bytes (before 5,168,359), `app/index.js` 463,785 bytes (the new code is not imported by the app yet).
+  - `FC_NUM_RUNS=3000 vitest run test/property` passed 10 times in a row after the clustering fix.
+  - No live model call was made in tests. No live cloud run was made for this PR: the extraction pipeline is not wired into the extension UI until T20, so the real build cannot run it.
+- **Who:** Grok Workhorse via Kilo wrote the code in two tasks (`wh-20261121-102114-46a5`: T16, T18; `wh-20261121-103221-5744`: T17, T17a), both verdict `success`. Grok Bot reviewed the diffs, found the monotonicity defect through a flaky test, replaced the algorithm, added the regression test, wrote PBT_FINDINGS, EVAL.md, the design and tasks edits, and verified on a fresh clone.
+- **Open items** (from the first push)
+  - T19: recreate the hook in Kiro and take the screenshot (Alex). T20 (console demo, M1) is next.
+  - Questions 4 and 5 (eval fixture source / gold review) still wait on Alex. R17 and the eval labels were not changed for those.
+
+- **Follow-up, same day (still PR #5), after Bloks answered the other spec questions**
+  - Applied Bloks's spec patch `spec-pr5.patch`. `design.md` applied cleanly. `requirements.md` and `tasks.md` needed a hand merge: R13.2 and T06 already had the later "preprint is not a reference" wording, which was kept instead of the patch's shorter replacement; existing ticks, the T17a synthetic-fixture note, and the design §4.2 `DB_VERSION` / `RECORD_VERSION` note were kept. There is no `PRD.md` in the repo. Q6 no longer mentions a "Zenodo problem". T15 was reworded so the R4.8 retry may live in `runExtraction`, and ticked.
+  - §7.3 is now hierarchical complete linkage. `cluster.ts` now uses −∞ for a user-split pair and breaks linkage ties by the smallest sorted member ids of the merged group. Property 3a is a named test ("lowering `mergeGhostThreshold` never splits an existing cluster"); property 4 still covers both monotonicity claims in 7.6.4. R4.3 (budget only on long documents) and R4.5 (`local_only` with no device model → blocked) already matched; named router tests were tightened.
+  - R3.4a: an entity is dropped (and `droppedUnanchored++`) if its name does not appear in the located quote after whitespace and case normalization. Relations still only need a locatable quote. Unit, property, and gold-harness tests cover this. No `gold.json` entry was rewritten: 10 of 42 mentions contain only an alias, not the canonical name; the harness now emits that alias so the name-in-quote check passes, and a new consistency test requires name or alias in every mention quote.
+  - Tests (fresh clone, `npm ci` first): see the updated PR description.
+
+
+---
+
 ## 2026-11-21 — PR #4: persist the page index (R2.4) and bundle pdf.js font data (open, not merged)
 
 - **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/4. Branch `t11-t14-pdf-pipeline`, from main `9b2b876` (PR #3 already merged). Not merged, not pushed to main.

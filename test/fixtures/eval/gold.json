@@ -1,0 +1,487 @@
+{
+  "fixtureId": "harbor-eval-minutes",
+  "pdf": "harbor-eval-minutes.pdf",
+  "textSource": "synthetic",
+  "license": "CC0-1.0",
+  "labeling": "hand-labeled by an AI assistant (Grok Bot) from the generated text on 2026-11-21; not yet independently reviewed by a human",
+  "entities": [
+    {
+      "id": "edith-marlow",
+      "name": "Edith Marlow",
+      "type": "person",
+      "aliases": [
+        "Mrs. Edith Marlow",
+        "Mrs. Marlow",
+        "E. Marlow"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Mrs. Edith Marlow chaired the meeting"
+        },
+        {
+          "page": 1,
+          "quote": "Mrs. Marlow has been a member"
+        },
+        {
+          "page": 1,
+          "quote": "brother of Mrs. Marlow"
+        },
+        {
+          "page": 3,
+          "quote": "E. Marlow wrote to Dr. Oswin Hale"
+        }
+      ]
+    },
+    {
+      "id": "harold-marlow",
+      "name": "Harold Marlow",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Harold Marlow, brother of Mrs. Marlow"
+        }
+      ]
+    },
+    {
+      "id": "saltmarsh-historical-society",
+      "name": "Saltmarsh Historical Society",
+      "type": "org",
+      "aliases": [
+        "SHS"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Saltmarsh Historical Society - Minutes"
+        },
+        {
+          "page": 1,
+          "quote": "a member of the Saltmarsh Historical Society"
+        },
+        {
+          "page": 1,
+          "quote": "a member of the SHS"
+        }
+      ]
+    },
+    {
+      "id": "oswin-hale",
+      "name": "Oswin Hale",
+      "type": "person",
+      "aliases": [
+        "Dr. Oswin Hale",
+        "Dr. Hale"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Dr. Oswin Hale reported"
+        },
+        {
+          "page": 1,
+          "quote": "Dr. Hale has been a member"
+        },
+        {
+          "page": 3,
+          "quote": "wrote to Dr. Oswin Hale in March"
+        }
+      ]
+    },
+    {
+      "id": "nella-brightwater",
+      "name": "Nella Brightwater",
+      "type": "person",
+      "aliases": [
+        "Miss Nella Brightwater",
+        "Miss Brightwater"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Miss Nella Brightwater, librarian"
+        },
+        {
+          "page": 1,
+          "quote": "Miss Brightwater for her care"
+        }
+      ]
+    },
+    {
+      "id": "lantern-street-library",
+      "name": "Lantern Street Library",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "librarian at the Lantern Street Library"
+        }
+      ]
+    },
+    {
+      "id": "arthur-corvin",
+      "name": "Arthur Corvin",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "Arthur Corvin and Felix Garrow ran the ferry business"
+        }
+      ]
+    },
+    {
+      "id": "felix-garrow",
+      "name": "Felix Garrow",
+      "type": "person",
+      "aliases": [
+        "Mr. Garrow"
+      ],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "and Felix Garrow ran the ferry business"
+        },
+        {
+          "page": 2,
+          "quote": "daughter of Felix Garrow"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Garrow is remembered"
+        }
+      ]
+    },
+    {
+      "id": "corvin-ferry-company",
+      "name": "Corvin Ferry Company",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "The Corvin Ferry Company kept its books"
+        },
+        {
+          "page": 2,
+          "quote": "employed by the Corvin Ferry Company"
+        }
+      ]
+    },
+    {
+      "id": "silas-thorne",
+      "name": "Silas Thorne",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "Silas Thorne, a pilot"
+        },
+        {
+          "page": 2,
+          "quote": "Silas Thorne wrote to Rupert Vane"
+        }
+      ]
+    },
+    {
+      "id": "rupert-vane",
+      "name": "Rupert Vane",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "wrote to Rupert Vane"
+        },
+        {
+          "page": 3,
+          "quote": "Rupert Vane met with Clara Ashdown"
+        }
+      ]
+    },
+    {
+      "id": "ruth-garrow",
+      "name": "Ruth Garrow",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "Ruth Garrow, daughter of Felix Garrow"
+        }
+      ]
+    },
+    {
+      "id": "clara-ashdown",
+      "name": "Clara Ashdown",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "met with Clara Ashdown"
+        },
+        {
+          "page": 3,
+          "quote": "Clara Ashdown works for"
+        }
+      ]
+    },
+    {
+      "id": "eastwater-printing-house",
+      "name": "Eastwater Printing House",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "the Eastwater Printing House"
+        }
+      ]
+    },
+    {
+      "id": "agnes-pell",
+      "name": "Agnes Pell",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "Agnes Pell, who sits on"
+        },
+        {
+          "page": 4,
+          "quote": "met with Agnes Pell"
+        }
+      ]
+    },
+    {
+      "id": "gullhaven-town-council",
+      "name": "Gullhaven Town Council",
+      "type": "org",
+      "aliases": [
+        "the Council"
+      ],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "sits on the Gullhaven Town Council"
+        },
+        {
+          "page": 3,
+          "quote": "A note from the Council"
+        },
+        {
+          "page": 4,
+          "quote": "thanked the Gullhaven Town Council"
+        }
+      ]
+    },
+    {
+      "id": "jonas-pike",
+      "name": "Jonas Pike",
+      "type": "person",
+      "aliases": [
+        "Mr. Jonas Pike"
+      ],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "Jonas Pike and Beatrice Lusk, partners"
+        },
+        {
+          "page": 4,
+          "quote": "Mr. Jonas Pike of the chandlery"
+        }
+      ]
+    },
+    {
+      "id": "beatrice-lusk",
+      "name": "Beatrice Lusk",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "and Beatrice Lusk, partners"
+        },
+        {
+          "page": 4,
+          "quote": "greeted by Beatrice Lusk"
+        },
+        {
+          "page": 4,
+          "quote": "Beatrice Lusk met with Agnes Pell"
+        }
+      ]
+    },
+    {
+      "id": "pike-lusk-chandlers",
+      "name": "Pike & Lusk Chandlers",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 3,
+          "quote": "partners in Pike & Lusk Chandlers"
+        }
+      ]
+    },
+    {
+      "id": "miriam-holloway",
+      "name": "Miriam Holloway",
+      "type": "person",
+      "aliases": [
+        "Miriam Hollo- way",
+        "Mrs. Holloway"
+      ],
+      "mentions": [
+        {
+          "page": 4,
+          "quote": "arranged by Miriam Hollo- way"
+        },
+        {
+          "page": 4,
+          "quote": "Mrs. Holloway thanked"
+        }
+      ]
+    },
+    {
+      "id": "mariners-benevolent-fund",
+      "name": "Mariners' Benevolent Fund",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 4,
+          "quote": "a member of the Mariners' Benevolent Fund"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "subject": "edith-marlow",
+      "object": "saltmarsh-historical-society",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Mrs. Marlow has been a member of the Saltmarsh Historical Society since 1931."
+    },
+    {
+      "subject": "harold-marlow",
+      "object": "edith-marlow",
+      "label": "family",
+      "page": 1,
+      "quote": "Harold Marlow, brother of Mrs. Marlow, attended as a guest and took no vote."
+    },
+    {
+      "subject": "oswin-hale",
+      "object": "saltmarsh-historical-society",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Dr. Hale has been a member of the SHS for ten years and keeps its seal."
+    },
+    {
+      "subject": "nella-brightwater",
+      "object": "lantern-street-library",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "Miss Nella Brightwater, librarian at the Lantern Street Library, brought the minute books"
+    },
+    {
+      "subject": "arthur-corvin",
+      "object": "felix-garrow",
+      "label": "business-partner",
+      "page": 2,
+      "quote": "Arthur Corvin and Felix Garrow ran the ferry business as partners until 1929."
+    },
+    {
+      "subject": "silas-thorne",
+      "object": "corvin-ferry-company",
+      "label": "employed-by",
+      "page": 2,
+      "quote": "Silas Thorne, a pilot employed by the Corvin Ferry Company"
+    },
+    {
+      "subject": "silas-thorne",
+      "object": "rupert-vane",
+      "label": "communicated-with",
+      "page": 2,
+      "quote": "Silas Thorne wrote to Rupert Vane about the loss of the old landing stage."
+    },
+    {
+      "subject": "ruth-garrow",
+      "object": "felix-garrow",
+      "label": "family",
+      "page": 2,
+      "quote": "Ruth Garrow, daughter of Felix Garrow, donated a box of photographs."
+    },
+    {
+      "subject": "edith-marlow",
+      "object": "oswin-hale",
+      "label": "communicated-with",
+      "page": 3,
+      "quote": "E. Marlow wrote to Dr. Oswin Hale in March about the damaged ledgers."
+    },
+    {
+      "subject": "rupert-vane",
+      "object": "clara-ashdown",
+      "label": "met-with",
+      "page": 3,
+      "quote": "Rupert Vane met with Clara Ashdown at the North Pier office in January."
+    },
+    {
+      "subject": "clara-ashdown",
+      "object": "eastwater-printing-house",
+      "label": "employed-by",
+      "page": 3,
+      "quote": "Clara Ashdown works for the Eastwater Printing House"
+    },
+    {
+      "subject": "agnes-pell",
+      "object": "gullhaven-town-council",
+      "label": "member-of",
+      "page": 3,
+      "quote": "Agnes Pell, who sits on the Gullhaven Town Council"
+    },
+    {
+      "subject": "jonas-pike",
+      "object": "beatrice-lusk",
+      "label": "business-partner",
+      "page": 3,
+      "quote": "Jonas Pike and Beatrice Lusk, partners in Pike & Lusk Chandlers"
+    },
+    {
+      "subject": "miriam-holloway",
+      "object": "mariners-benevolent-fund",
+      "label": "member-of",
+      "page": 4,
+      "quote": "Miriam Hollo- way, who is a member of the Mariners' Benevolent Fund."
+    },
+    {
+      "subject": "beatrice-lusk",
+      "object": "agnes-pell",
+      "label": "met-with",
+      "page": 4,
+      "quote": "Beatrice Lusk met with Agnes Pell to plan the next exhibition."
+    }
+  ],
+  "notEntities": [
+    "January",
+    "March",
+    "June",
+    "July",
+    "August",
+    "Tuesday",
+    "Sunday",
+    "Gullhaven",
+    "North Pier",
+    "Members",
+    "Visitors",
+    "Correspondence Received"
+  ]
+}

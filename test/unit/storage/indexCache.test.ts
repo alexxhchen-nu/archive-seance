@@ -5,7 +5,7 @@ import {
 } from '../../../src/storage/indexCache';
 import type { PutIndexInput } from '../../../src/storage/indexCache';
 import { openSeanceDb } from '../../../src/storage/openDb';
-import { DB_NAME, SCHEMA_VERSION } from '../../../src/storage/schema';
+import { DB_NAME, DB_VERSION, RECORD_VERSION } from '../../../src/storage/schema';
 import type { Chunk, PageText } from '../../../src/types';
 
 function input(docId: string, pageCount = 2, title = 'a.pdf'): PutIndexInput {
@@ -32,8 +32,8 @@ describe('indexCache', () => {
   it('uses the seance database at the schema version', async () => {
     const db = await openSeanceDb();
     expect(db.name).toBe(DB_NAME);
-    expect(db.version).toBe(SCHEMA_VERSION);
-    expect([...db.objectStoreNames].sort()).toEqual(['chunks', 'documents', 'pages']);
+    expect(db.version).toBe(DB_VERSION);
+    expect([...db.objectStoreNames].sort()).toEqual(['chunks', 'documents', 'mentions', 'pages']);
     db.close();
   });
 
@@ -43,7 +43,7 @@ describe('indexCache', () => {
     const hit = await getIndex('d1');
     expect(hit?.pages).toEqual(i.pages);
     expect(hit?.chunks).toEqual(i.chunks);
-    expect(hit?.meta).toMatchObject({ docId: 'd1', title: 'a.pdf', sourceName: 'a.pdf', pages: 3, chunkCount: 3, schemaVersion: SCHEMA_VERSION });
+    expect(hit?.meta).toMatchObject({ docId: 'd1', title: 'a.pdf', sourceName: 'a.pdf', pages: 3, chunkCount: 3, schemaVersion: RECORD_VERSION });
   });
 
   it('returns undefined on a miss', async () => {
@@ -62,7 +62,7 @@ describe('indexCache', () => {
     expect(await getIndex('d1')).toBeUndefined();
   });
 
-  it.each([SCHEMA_VERSION - 1, SCHEMA_VERSION + 1])('treats schemaVersion %i as a miss', async (v) => {
+  it.each([RECORD_VERSION - 1, RECORD_VERSION + 1])('treats schemaVersion %i as a miss', async (v) => {
     await putIndex(input('d1'));
     const meta = (await listDocuments())[0]!;
     await raw('documents', (s) => s.put({ ...meta, schemaVersion: v }));

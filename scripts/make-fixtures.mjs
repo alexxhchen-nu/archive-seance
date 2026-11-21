@@ -1,6 +1,6 @@
 // Writes the synthetic fixture PDFs in test/fixtures/. Deterministic, no dependencies.
 // Usage: node scripts/make-fixtures.mjs
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -95,7 +95,59 @@ const mixed = [
   ])
 ];
 
+// Labeled eval fixture (gold labels in test/fixtures/eval/gold.json). Fictional people and groups.
+const harborEval = [
+  [
+    'Saltmarsh Historical Society - Minutes of the January Meeting',
+    '',
+    'Mrs. Edith Marlow chaired the meeting in the reading room on a cold Tuesday.',
+    'Mrs. Marlow has been a member of the Saltmarsh Historical Society since 1931.',
+    'Harold Marlow, brother of Mrs. Marlow, attended as a guest and took no vote.',
+    'Dr. Oswin Hale reported on the damaged ledgers kept in the north cellar.',
+    'Dr. Hale has been a member of the SHS for ten years and keeps its seal.',
+    'Miss Nella Brightwater, librarian at the Lantern Street Library, brought',
+    'the minute books for the years 1920 to 1925.',
+    'Members thanked Miss Brightwater for her care with the bindings.'
+  ],
+  [
+    'Report on the Corvin Ferry Papers',
+    '',
+    'Arthur Corvin and Felix Garrow ran the ferry business as partners until 1929.',
+    'The Corvin Ferry Company kept its books at the North Pier office in Gullhaven.',
+    'Silas Thorne, a pilot employed by the Corvin Ferry Company, described the',
+    'winter crossings in a long letter dated March 1928.',
+    'Silas Thorne wrote to Rupert Vane about the loss of the old landing stage.',
+    'Ruth Garrow, daughter of Felix Garrow, donated a box of photographs.',
+    'Mr. Garrow is remembered in Gullhaven for the brass bell on the ferry.'
+  ],
+  [
+    'Correspondence Received',
+    '',
+    'E. Marlow wrote to Dr. Oswin Hale in March about the damaged ledgers.',
+    'Rupert Vane met with Clara Ashdown at the North Pier office in January.',
+    'Clara Ashdown works for the Eastwater Printing House, which printed the notices.',
+    'Agnes Pell, who sits on the Gullhaven Town Council, offered a reading room',
+    'for the summer exhibition.',
+    'A note from the Council asked that the exhibition close before August.',
+    'Jonas Pike and Beatrice Lusk, partners in Pike & Lusk Chandlers, sent rope',
+    'and lamp oil for the display cases.'
+  ],
+  [
+    'Notes on the Summer Exhibition',
+    '',
+    'The display of sea charts was arranged by Miriam Hollo-',
+    "way, who is a member of the Mariners' Benevolent Fund.",
+    'Visitors were greeted by Beatrice',
+    'Lusk and by Mr. Jonas Pike of the chandlery.',
+    'Mrs. Holloway thanked the Gullhaven Town Council for the loan of the hall.',
+    'The exhibition opened in June and closed on the last Sunday of July.',
+    'Beatrice Lusk met with Agnes Pell to plan the next exhibition.'
+  ]
+];
+
 writeFileSync(join(outDir, 'harbor-lantern-minutes.pdf'), buildPdf(harbor.map(textStream)));
+mkdirSync(join(outDir, 'eval'), { recursive: true });
+writeFileSync(join(outDir, 'eval', 'harbor-eval-minutes.pdf'), buildPdf(harborEval.map(textStream)));
 writeFileSync(join(outDir, 'mixed-scanned.pdf'), buildPdf(mixed));
 
 // Standard 14 Times-Roman, not embedded: pdf.js needs standardFontDataUrl to load a substitute.
@@ -112,4 +164,4 @@ const utf16hex = (t) => Buffer.from(t, 'utf16le').swap16().toString('hex').toUpp
 const cjkLines = ['港湾灯笼 Harbor Lantern Society', '港湾灯笼会议于黄昏召开。', '会员们在东码头点亮了十二盏铜灯。'];
 const cjkOps = cjkLines.map((t, k) => `BT /F1 14 Tf 1 0 0 1 56 ${760 - k * 20} Tm <${utf16hex(t)}> Tj ET`).join('\n');
 writeFileSync(join(outDir, 'cjk-unigb.pdf'), buildPdf([cjkOps], CJK));
-console.log('wrote harbor-lantern-minutes.pdf, mixed-scanned.pdf, times-roman-plain.pdf, cjk-unigb.pdf');
+console.log('wrote harbor-lantern-minutes.pdf, mixed-scanned.pdf, times-roman-plain.pdf, cjk-unigb.pdf, eval/harbor-eval-minutes.pdf');

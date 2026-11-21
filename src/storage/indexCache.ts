@@ -1,6 +1,7 @@
 import type { Chunk, PageText } from '../types';
 import { openSeanceDb } from './openDb';
-import { SCHEMA_VERSION, STORE_CHUNKS, STORE_DOCUMENTS, STORE_PAGES } from './schema';
+import { deleteMentionsOf } from './mentionStore';
+import { RECORD_VERSION, STORE_CHUNKS, STORE_DOCUMENTS, STORE_MENTIONS, STORE_PAGES } from './schema';
 
 export interface CachedDocumentMeta {
   docId: string;          // sha256 hex
@@ -9,7 +10,7 @@ export interface CachedDocumentMeta {
   sourceName?: string;    // local filename if any
   pages: number;
   chunkCount: number;
-  schemaVersion: number;  // SCHEMA_VERSION written at put time
+  schemaVersion: number;  // RECORD_VERSION written at put time
   createdAt: string;      // ISO-8601
   updatedAt: string;
 }
@@ -62,7 +63,7 @@ export function getIndex(docId: string, factory?: IDBFactory): Promise<CachedInd
       req(tx.objectStore(STORE_PAGES).getAll(pageRange(docId))) as Promise<PageText[]>,
       req(tx.objectStore(STORE_CHUNKS).get(docId)) as Promise<{ docId: string; chunks: Chunk[] } | undefined>
     ]);
-    if (!meta || meta.schemaVersion !== SCHEMA_VERSION || !chunkRec) return undefined;
+    if (!meta || meta.schemaVersion !== RECORD_VERSION || !chunkRec) return undefined;
     if (pages.length !== meta.pages || chunkRec.chunks.length !== meta.chunkCount) return undefined;
     pages.sort((a, b) => a.page - b.page);
     if (pages.some((p, i) => p.page !== i + 1)) return undefined;
@@ -82,7 +83,7 @@ export function putIndex(input: PutIndexInput, factory?: IDBFactory, now: () => 
       ...input.meta,
       pages: input.pages.length,
       chunkCount: input.chunks.length,
-      schemaVersion: SCHEMA_VERSION,
+      schemaVersion: RECORD_VERSION,
       createdAt: prev?.createdAt ?? at,
       updatedAt: at
     };
@@ -104,8 +105,9 @@ export function putIndex(input: PutIndexInput, factory?: IDBFactory, now: () => 
 
 export function clearDocument(docId: string, factory?: IDBFactory): Promise<void> {
   return withDb(factory, async (db) => {
-    const tx = db.transaction(ALL, 'readwrite');
+    const tx = db.transaction([...ALL, STORE_MENTIONS], 'readwrite');
     const finished = done(tx);
+    deleteMentionsOf(tx.objectStore(STORE_MENTIONS), docId);
     tx.objectStore(STORE_DOCUMENTS).delete(docId);
     tx.objectStore(STORE_PAGES).delete(pageRange(docId));
     tx.objectStore(STORE_CHUNKS).delete(docId);
@@ -115,9 +117,10 @@ export function clearDocument(docId: string, factory?: IDBFactory): Promise<void
 
 export function clearAll(factory?: IDBFactory): Promise<void> {
   return withDb(factory, async (db) => {
-    const tx = db.transaction(ALL, 'readwrite');
+    const stores = [...ALL, STORE_MENTIONS];
+    const tx = db.transaction(stores, 'readwrite');
     const finished = done(tx);
-    for (const s of ALL) tx.objectStore(s).clear();
+    for (const s of stores) tx.objectStore(s).clear();
     await finished;
   });
 }

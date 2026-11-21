@@ -289,7 +289,7 @@ If the SDK's `Schema` helper is required for `responseSchema` on the cloud side,
 
 ### 4.2 Storage
 
-- IndexedDB database `seance`: stores `documents`, `pages` (key `[docId,page]`), `chunks` (key `docId`), `mentions`, `relations`, `decisions`, `outbound`. All keyed by `docId` (PDF hash). Accessed through a small in-repo wrapper (`src/storage/`) instead of the `idb` library, to avoid a runtime dependency. Stores are created as their tasks land (v1: `documents`, `pages`, `chunks`); `SCHEMA_VERSION` is both the IDB version and the record format version, and a record with another version is a cache miss.
+- IndexedDB database `seance`: stores `documents`, `pages` (key `[docId,page]`), `chunks` (key `docId`), `mentions`, `relations`, `decisions`, `outbound`. All keyed by `docId` (PDF hash). Accessed through a small in-repo wrapper (`src/storage/`) instead of the `idb` library, to avoid a runtime dependency. Stores are created as their tasks land (v1: `documents`, `pages`, `chunks`; v2: `mentions`). `DB_VERSION` is the IDB open version (2); `RECORD_VERSION` (1) is the format version written into cached index records, and a record with another version is a cache miss. Adding a store bumps `DB_VERSION` only, so already-cached documents stay valid.
 - `chrome.storage.local`: settings (`sensitivity` per doc is in `documents`), consent flag per session in `chrome.storage.session`.
 - Nothing in `chrome.storage.sync`.
 
@@ -374,7 +374,8 @@ export function decideRoute(task: Task, doc: { sensitivity: Sensitivity; pages: 
       return localOk ? { route: 'local', reason: 'cloud unavailable; best effort local' } : { route: 'blocked', reason: 'no route available' };
     }
     case 'cross-page':
-      if (cfg.crossPageMode === 'local_only' && localOk) return { route: 'local', reason: 'config: local only' };
+      if (cfg.crossPageMode === 'local_only')
+        return localOk ? { route: 'local', reason: 'config: local only' } : { route: 'blocked', reason: 'config: local only and on-device model unavailable' };
       if (cloudOk) return { route: 'cloud', reason: 'cross-page reasoning needs long context' };
       return localOk ? { route: 'local', reason: 'cloud unavailable; reduced batch' } : { route: 'blocked', reason: 'no route available' };
     case 'adjudicate':
@@ -505,7 +506,7 @@ The model can veto or nudge a merge, but never create a solid merge on its own.
 
 ### 7.3 Clustering (complete linkage, no chaining)
 
-Greedy agglomeration over pairs sorted by `total` descending: join two clusters only if **every** cross pair has `total >= mergeGhostThreshold` and no `userDecision: 'split'` forbids it. Cluster `status`: `solid` if all member pairs `>= mergeAutoThreshold`, else `ghost`. Cluster `confidence` = minimum pair total (weakest link). User `confirmed` pairs count as 1.0.
+Standard agglomerative hierarchical clustering with complete linkage. Linkage between two clusters = the minimum `total` over all cross pairs; a `userDecision: 'split'` pair sets it to −∞ (cannot-link). Repeatedly merge the pair of clusters with the highest linkage (ties broken by smallest sorted member id) while that linkage is `>= mergeGhostThreshold`. The earlier greedy pair-order version failed a property test (lowering the threshold by one ulp split a cluster); the shrunk counterexample is kept as a regression test (see `docs/PBT_FINDINGS.md`). Cluster `status`: `solid` if all member pairs `>= mergeAutoThreshold`, else `ghost`. Cluster `confidence` = minimum pair total (weakest link). User `confirmed` pairs count as 1.0.
 
 ### 7.4 Rendering a ghost
 
@@ -528,6 +529,7 @@ Greedy agglomeration over pairs sorted by `total` descending: join two clusters 
 1. `total ∈ [0,1]` and symmetric: `score(A,B) == score(B,A)`.
 2. Idempotent: clustering the output entities again changes nothing.
 3. No chaining: for any cluster of size ≥ 3 every pair is ≥ `mergeGhostThreshold`.
+3a. Threshold monotonicity: lowering `mergeGhostThreshold` never splits an existing cluster (clusters at the higher threshold are subsets of clusters at the lower one).
 4. Monotonic thresholds: raising `mergeAutoThreshold` never turns a ghost into solid; lowering `mergeGhostThreshold` never splits an existing cluster.
 5. Different types never share a cluster.
 6. A `split` decision is honored for every permutation of input order.
@@ -625,6 +627,7 @@ Demo use: during the video, flip `cloud_enabled` to false in the Firebase consol
 | Local call timeout/exception | `withTimeout`, catch | Retry once; public → cloud for that chunk; sensitive → `failed` |
 | Model returns invalid JSON | `JSON.parse` / schema validate fails | Retry once with "Return only JSON"; else chunk `failed`, counted |
 | Quote not found in chunk | `locateQuote` null | Drop item; `droppedUnanchored++` |
+| Entity name not inside its quote | normalized `includes` false | Drop entity; `droppedUnanchored++` (R3.4a) |
 | Prompt exceeds device limit | SDK/Prompt API error `QuotaExceededError` (**[VERIFY-2]** name) | Split chunk in half once; else route per router |
 | Cloud App Check rejection | HTTP 401/403 with App Check message | Stop cloud queue; banner "App Check token rejected — register debug token (see README)"; do not retry storm |
 | Cloud quota / 429 | HTTP 429 | Exponential backoff 2s, 8s, 30s; then `failed` |
@@ -740,7 +743,7 @@ Playbook: "answers must use numbers from real runs."
 | Q3 | How accurate is the extraction? (precision and recall on a hand-labeled set; no invented numbers) | R17.1–R17.4 | T17a [11/23], T37 [11/27] |
 | Q4 | What is a ghost node, and how is the threshold set? (Remote Config or local Settings) | R7, R7.9, R11, R11.5 | T18 [11/23], T29 [11/25], T32 [11/26] |
 | Q5 | Gemini Nano has a small context. How are long documents handled? (chunk locally, cross-page in the cloud, UI shows the route) | R2.2, R4, R4.10, R8.5 | T14 [11/22], T27 [11/25] |
-| Q6 | Who would actually use this? (journalists, researchers, the Zenodo problem) | R13.2, product users | T06, T10 [11/21], T41 [11/28] |
+| Q6 | Who would actually use this? (journalists, researchers) | R13.2, product users | T06, T10 [11/21], T41 [11/28] |
 | Q7 | How is this different from existing extractors? (show uncertainty, local-first, jump-to-source) | R7, NFR1, R9 | T24, T32, T41 |
 | Q8 | How did Kiro change the process versus vibe coding? | R18.5 | T08 [11/21], T43 [11/28] |
 | Q9 | Did property-based testing catch anything? (a real merge bug, recorded for the video) | R17.5 | T19 [11/23], T37 [11/27], T41 [11/28] |
