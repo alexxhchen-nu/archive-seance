@@ -5,6 +5,12 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — Spec: T20 follow-up decisions from Bloks (cut order)
+
+- **What was done:** Applied Bloks's `spec-t20.patch`: the design §7.4 ghost "breathing" animation (T31) is now first in the cut order; a static dashed ring + opacity already satisfies R7.4. Bloks's answers to the other T20 questions needed no spec change: Confirm/Split/Not sure and persist-by-hash belong to T32; the demo stays `cloudEnabled: false` (cloud path is T27, no-Nano prompt is T33); merge-threshold overrides belong to T29 (Settings panel required, ghost < auto), and T32's ghost card shows the current thresholds and their source.
+- **Tests:** docs only; `git apply --check` clean.
+- **Who:** Bloks (spec), Grok Bot (applied).
+
 ## 2026-11-21 — PR #8: T20 console demo (open, not merged)
 
 - **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/8. Branch `t20-console-demo`, head `4098c50`, from main `a2d4fd6`. Not merged, not pushed to main.
