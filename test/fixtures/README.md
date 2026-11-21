@@ -19,3 +19,9 @@ them. Update it only after an intentional change to indexing or chunking.
 
 License: the fixture PDFs, their text and `fixtures.expected.json` are dedicated to the public domain
 under CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/).
+
+- `eval/nhprc-2015-11/`: short quotes and the pdf.js text of pages 1–2 of the public-domain
+  NHPRC minutes listed in `docs/DEMO_SOURCES.md`. The official PDF is not committed.
+  Labels are AI-drafted and pending review; this is the measured eval fixture, not a
+  synthetic smoke test.
+

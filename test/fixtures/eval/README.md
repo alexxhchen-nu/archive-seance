@@ -32,3 +32,12 @@ hyphenated line-end split (`Hollo-` / `way`), a person and an organization with 
 - Labeled by an AI assistant, not by independent annotators; there is no agreement measure.
 - No accuracy numbers exist yet. The test above checks the harness (fixture, pipeline and
   scorer, fed the gold labels themselves), not any model.
+
+## Measured gold (separate directory)
+
+The NHPRC public-domain gold set lives in `nhprc-2015-11/` (pages 1–2 of the official
+minutes, short quotes only). It is AI-drafted and pending human review, and it is the
+fixture `npm run eval` will use after review. This synthetic PDF is a smoke test only
+and is not used for numbers in `docs/EVAL.md`. See `nhprc-2015-11/README.md` and
+`docs/eval/NHPRC_GOLD_REVIEW.md`.
+

@@ -24,6 +24,6 @@ Both documents are works of the US federal government, so they are in the public
 
 ## How they are used
 
-- The PDFs are **not committed** to this repository. Download them from the URLs above and open them with "Open local PDF", or use the URL flow.
-- Automated tests use the synthetic fixtures in `test/fixtures/` (made-up text), not these documents.
-- Any gold labels derived from these PDFs for T17a will quote short passages only and cite page numbers.
+- The official PDFs are **not committed** to this repository. Download them from the URLs above and open them with "Open local PDF", or use the URL flow.
+- Automated tests use the synthetic fixtures in `test/fixtures/` (made-up text) as a smoke test. They are not used for numbers in `docs/EVAL.md`.
+- The measured eval fixture (T17a / R17.1) is short quotes from **pages 1–2** of the NHPRC minutes, plus this repo’s pdf.js extraction of those two pages, in `test/fixtures/eval/nhprc-2015-11/`. The official PDF is not in the tree. `scripts/verify-nhprc-eval.mjs` fetches the URL (or takes `--pdf`) and checks the SHA-256 above against a fresh extraction. Gold labels are AI-drafted and pending review by Alex (`docs/eval/NHPRC_GOLD_REVIEW.md`); `reviewedBy` and `reviewedAt` stay empty until that review.

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
+import { execFileSync } from 'node:child_process';
 import { cpSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -19,7 +20,17 @@ function copyPdfjsData(outDir: string): Plugin {
 
 // MV3 build: HTML entry for the app page + a module service worker.
 // `--mode mock` builds the same extension with a scripted Firebase AI Logic layer (dist-mock/).
+// Short git SHA stamped into eval exports (R17.2). Empty when git is unavailable.
+function gitSha(): string {
+  try {
+    return execFileSync('git', ['rev-parse', '--short=12', 'HEAD'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  } catch {
+    return '';
+  }
+}
+
 export default defineConfig(({ mode }) => {
+  process.env.VITE_GIT_SHA ??= gitSha();
   const outDir = resolve(import.meta.dirname, mode === 'mock' ? 'dist-mock' : 'dist');
   return {
   plugins: [copyPdfjsData(outDir)],

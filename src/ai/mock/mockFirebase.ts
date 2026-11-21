@@ -68,7 +68,7 @@ export function createMockFirebase(initial: MockDevice) {
   return { ai, makeModel, makeDeviceModel, probeAvailability };
 }
 
-export function createMockController(search: string): ProbeController {
+export function createMockController(search: string): ProbeController & { evalModel: () => GenerateLike } {
   const m = createMockFirebase(parseMockDevice(search));
   const cfg = { ...DEFAULTS };
   return {
@@ -78,6 +78,7 @@ export function createMockController(search: string): ProbeController {
     banner: 'MOCK build: scripted responses, no Firebase calls are made.',
     probeAvailability: m.probeAvailability,
     enableDevice: (onProgress) => initDeviceModel(m.makeDeviceModel(), onProgress),
-    run: (mode) => runHybridProbe({ ai: m.ai, cfg, makeModel: m.makeModel }, mode)
+    run: (mode) => runHybridProbe({ ai: m.ai, cfg, makeModel: m.makeModel }, mode),
+    evalModel: () => m.makeModel(m.ai, 'extract', 'only_on_device' as InferenceMode, cfg)
   };
 }

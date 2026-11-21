@@ -5,6 +5,43 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — PR #7: T37a wire the R17.2 comparison pass for `npm run eval` (open, not merged)
+
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/7. Branch `t37a-eval-compare`, head `f6019d4`. **Stacked on PR #6** (`t17a-nhprc-gold`). Not merged, not pushed to main. T37 and T20 are not ticked. No accuracy, precision, recall or timing numbers were written; `docs/EVAL.md` still says “not yet measured”.
+- **What was done**
+  - `src/eval/predictions.ts`: `buildPredictions` (pure; from `runExtraction` output, entities merged with `buildEntities`, only page + anchored quote + surface kept), `validatePredictions` (schema, fixtureId match, refuses `build.flavor: "mock"`), `scorePredictions` (calls `scoreEntities` / `scoreRelations` from `score.ts`).
+  - `src/eval/evalDoc.ts`: replaces only the target mode's rows in the `docs/EVAL.md` table (idempotent; errors rather than appending if a row is missing).
+  - `src/app/evalExport.ts` + two “Export eval run” buttons on the probe panel: runs the local extraction pipeline on pages 1–2 of the opened PDF and downloads the JSON. The build flavor comes from `import.meta.env.MODE`; the git SHA is stamped by `vite.config.ts` as `VITE_GIT_SHA`.
+  - `scripts/eval.mjs`: R17.1a gate first (exit 1), then no `--predictions` exits 2 with export instructions, invalid file exits 3, mock run exits 4, else scores and writes rows. `EVAL_GOLD_PATH` kept; `EVAL_MD_PATH` added so tests use temp copies.
+  - `docs/EVAL.md`: added “How to measure”.
+- **Narrow interpretations (no spec change):** entity scoring uses every exported mention surface (as the existing harness test does), not only merged labels. “cloud-enabled” sets `cloudEnabled: true` for routing, but `runExtraction` still only runs local chunks (cloud chunks are counted as pending-cloud) because the cloud extraction path is not built yet. Timing is wall-clock of the extraction call only (excludes PDF load/index). Export refuses a PDF whose SHA-256 is not the NHPRC file in `docs/DEMO_SOURCES.md`. Measurement dates are written in America/Chicago.
+- **Tests:** typecheck, lint, `npm test` 749 passed / 1 skipped after the review follow-up (fresh clone of `f6019d4` had been 747 passed / 1 skipped, plus builds, e2e 55/55, `check:secrets`, `check:bundle-rhc`). No accuracy numbers written; T37 still unticked.
+- **Who:** Grok Workhorse (implementation); Grok Bot (review: SHA check, Chicago date, EVAL.md cloud-path note, refuse no-inference exports, mock export uses the controller probe; verification).
+
+## 2026-11-21 — PR #6 follow-up: Alex reviewed the NHPRC gold
+
+- **What was done:** Alex reviewed `docs/eval/NHPRC_GOLD_REVIEW.md` and answered “全部keep” (keep all items, no edits). `gold.json` now has `reviewedBy: "Alex Chen"`, `reviewedAt: "2026-11-21"` and an updated `labeling` line. `docs/EVAL.md` checklist and the review sheet status were updated. `scripts/eval.mjs` accepts `EVAL_GOLD_PATH` so the R17.1a refusal test runs against an unreviewed temp copy; a second test checks that with the reviewed gold, `npm run eval` exits 2 (comparison not wired until T37) and leaves `docs/EVAL.md` unchanged.
+- **Tests:** typecheck, lint, `npm test` 720 passed / 1 skipped. No accuracy numbers written; T37 still unticked.
+- **Who:** Alex (review), Grok Bot (edits).
+- **Open items:** T37 can now measure once the comparison pass is wired.
+
+## 2026-11-21 — PR #6: NHPRC gold draft for T17a / R17.1, eval review gate (open, not merged)
+
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/6. Branch `t17a-nhprc-gold`, from main `eda1d25` (PR #5 already merged). Not merged, not pushed to main.
+- **What was done**
+  - Applied Bloks’s R17 patch: R17.1 now requires short quotes from 1–2 pages of the NHPRC public-domain PDF, AI-drafted labels reviewed by the author, `reviewedBy` / `reviewedAt` on the fixture, and the synthetic fixture as a smoke test only. New R17.1a: `npm run eval` must refuse to write accuracy numbers while the gold is unreviewed. T17a gained an update line that T37 may not measure until Alex reviews. Existing R13.2 and T06 wording was kept. The R17 `tasks.md` hunk was merged by hand because this branch already had ticks and the T17a synthetic note.
+  - Pages 1–2 of the November 6, 2015 NHPRC Executive Summary Minutes were chosen as the densest in people, organizations, and stated relations (attendance and affiliations on page 1; the strategic-planning discussion on page 2).
+  - The official PDF is still not committed. The fixture is `test/fixtures/eval/nhprc-2015-11/`: `gold.json` (25 people, 9 organizations, 66 mentions, 25 relations, 14 non-entities) and `pages.json` (this repo’s pdf.js text of those two pages, public domain). `scripts/verify-nhprc-eval.mjs` fetches the official URL or takes `--pdf`, checks the SHA-256 in `docs/DEMO_SOURCES.md`, and compares a fresh extraction to `pages.json`. Ran successfully against the local copy (`ecb7abc7…`).
+  - Gold is marked AI-drafted, `reviewedBy: null`, `reviewedAt: null`. Review sheet: `docs/eval/NHPRC_GOLD_REVIEW.md`. `docs/EVAL.md` stays “not yet measured,” with an author-review checklist; the synthetic fixture is described as smoke-only. T37 is not ticked and no accuracy numbers were written.
+  - `src/eval/reviewGate.ts` and `npm run eval` implement the R17.1a refusal (exit 1, `docs/EVAL.md` untouched).
+- **Tests and results** (fresh clone; see the PR description)
+  - typecheck, lint, both builds, `build:mock` then e2e, `check:secrets`, `check:bundle-rhc`.
+  - `npm test` counts are in the PR description. `npm run eval` exits 1 and does not modify `docs/EVAL.md`.
+- **Who:** Grok Bot drafted the gold and the review sheet for Alex’s 20–30 minute review. No live model was called.
+- **Open items**
+  - Alex reviews `docs/eval/NHPRC_GOLD_REVIEW.md`, then sets `reviewedBy` / `reviewedAt`. T37 cannot measure until that is done.
+
+
 ## 2026-11-21 — PR #5: T16 router, T17 local extraction, T17a eval fixture, T18 merge, T19 PBT (open, not merged)
 
 - **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/5. Branch `t16-t19-extraction`, from main `c2ce14a` (PR #4 already merged). Not merged, not pushed to main.
