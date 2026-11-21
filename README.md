@@ -160,9 +160,11 @@ You need Node.js 20 or later and Chrome 139 or later. Gemini Nano also needs eno
 
 | Command | What it does |
 |---|---|
+| `npm run dev` | Rebuild `dist/` on change (development mode). |
 | `npm run build` | Type-check, then build `dist/`. |
 | `npm run build:mock` | Build `dist-mock/` with the scripted Firebase layer. |
 | `npm run typecheck` | Run `tsc --noEmit` in strict mode. |
+| `npm run lint` | Run ESLint (flat config, typescript-eslint recommended). |
 | `npm test` | Run the Vitest unit and property tests (36 tests in 10 files). |
 | `npm run check:secrets` | Fail on API-key shapes, debug-token literals, committed `.env*`, or `.kiro` in `.gitignore`. |
 | `npm run check:bundle-rhc` | Fail if `dist/` contains remote reCAPTCHA or Google API scripts (Chrome Web Store MV3 rule). |
