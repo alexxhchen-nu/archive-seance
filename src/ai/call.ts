@@ -28,6 +28,13 @@ export class PrivacyInvariantError extends Error {
   }
 }
 
+export class ModeViolationError extends Error {
+  override name = 'ModeViolationError';
+  constructor(readonly requested: string, readonly source: string) {
+    super(`Mode ${requested} reported inferenceSource ${source}`);
+  }
+}
+
 export function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => reject(new ModelTimeoutError(ms)), ms);
@@ -55,4 +62,10 @@ export async function callModel(model: GenerateLike, prompt: string, opts: { tim
 
 export function assertPrivacy(sensitivity: Sensitivity, source: InferenceSourceTag): void {
   if (sensitivity === 'sensitive' && source !== 'on_device') throw new PrivacyInvariantError();
+}
+
+/** Fails closed if an "only" mode reports the other path. */
+export function assertModeHonored(mode: 'only_on_device' | 'prefer_on_device' | 'only_in_cloud', source: InferenceSourceTag): void {
+  if (mode === 'only_on_device' && source !== 'on_device') throw new ModeViolationError(mode, source);
+  if (mode === 'only_in_cloud' && source !== 'in_cloud') throw new ModeViolationError(mode, source);
 }

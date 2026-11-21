@@ -1,7 +1,7 @@
 import type { AI, InferenceMode } from 'firebase/ai';
 import type { Config } from '../config/defaults';
 import type { HybridModeName, InferenceLogEntry, InferenceSourceTag } from '../types';
-import { callModel } from './call';
+import { assertModeHonored, callModel } from './call';
 import type { GenerateLike } from './call';
 import { makeModel as realMakeModel } from './models';
 
@@ -97,6 +97,7 @@ export async function runHybridProbe(deps: HybridProbeDeps, mode: HybridModeName
   const model = make(deps.ai, 'extract', MODE_MAP[mode], deps.cfg);
   const prompt = buildExtractionPrompt(SAMPLE_TEXT);
   const call = await callModel(model, prompt, { timeoutMs: deps.cfg.localCallTimeoutMs });
+  assertModeHonored(mode, call.source);
   const parsed = parseExtraction(call.text, call.source);
   const log: InferenceLogEntry = {
     id: crypto.randomUUID(),

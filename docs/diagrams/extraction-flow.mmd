@@ -1,0 +1,15 @@
+flowchart LR
+  PDF[Public-archive PDF<br/>with a text layer] --> IDX[Page text index<br/>page + character offsets]
+  IDX --> CH[Chunker<br/>never crosses a page]
+  CH --> LLM[Hybrid model call<br/>JSON schema output<br/>entities + relations + verbatim quotes]
+  LLM --> LOC[locateQuote<br/>code finds the offsets]
+  LOC -->|quote not found| DROP[Dropped and counted]
+  LOC -->|quote found| MEN[Mentions with anchors]
+  MEN --> MERGE[Merge and confidence<br/>code, not the model]
+  MERGE -->|score above auto threshold| SOLID[Solid node]
+  MERGE -->|between ghost and auto| GHOST[Ghost node<br/>dashed ring, translucent]
+  SOLID --> GRAPH[D3 network]
+  GHOST --> GRAPH
+  GRAPH -->|click a node or edge| JUMP[Jump to the quote in the PDF]
+  classDef planned fill:#eee,stroke:#999,stroke-dasharray:4 3,color:#333;
+  class IDX,CH,LOC,MEN,MERGE,SOLID,GHOST,GRAPH,JUMP,DROP planned;

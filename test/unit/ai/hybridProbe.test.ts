@@ -81,3 +81,11 @@ describe('runHybridProbe', () => {
     }), { numRuns: 200 });
   });
 });
+
+describe('runHybridProbe mode guard', () => {
+  it('rejects an only_on_device run that the SDK reports as in_cloud', async () => {
+    const { ModeViolationError } = await import('../../../src/ai/call');
+    const { d } = deps(async () => ({ text: GOOD, source: 'in_cloud' }));
+    await expect(runHybridProbe(d, 'only_on_device')).rejects.toBeInstanceOf(ModeViolationError);
+  });
+});

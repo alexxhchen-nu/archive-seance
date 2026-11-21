@@ -1,0 +1,18 @@
+flowchart LR
+  U([You click Summon]) --> APP[App page<br/>src/app/main.ts]
+  APP --> ROUTE{On-device model<br/>available?}
+  ROUTE -- yes --> LOCAL[Firebase AI Logic hybrid model<br/>mode: only_on_device<br/>src/ai/models.ts]
+  LOCAL --> NANO[(Chrome Prompt API<br/>Gemini Nano on your machine)]
+  ROUTE -- no, and you allow cloud --> CLOUD[Firebase AI Logic hybrid model<br/>mode: only_in_cloud<br/>src/ai/models.ts]
+  CLOUD --> AC[App Check<br/>debug token<br/>src/ai/firebase.ts]
+  AC --> GEM[(Gemini in the cloud)]
+  ROUTE -- no, document is sensitive --> BLOCK[Blocked: stays on device]
+  NANO --> CALL[callModel<br/>records inferenceSource<br/>src/ai/call.ts]
+  GEM --> CALL
+  CALL --> BADGE[UI badge:<br/>Ran on-device / Ran in cloud]
+  classDef local fill:#ffe9b8,stroke:#b8860b,color:#222;
+  classDef cloud fill:#e3d9ff,stroke:#6a4fd6,color:#222;
+  classDef stop fill:#ffd6d6,stroke:#c0392b,color:#222;
+  class LOCAL,NANO local;
+  class CLOUD,AC,GEM cloud;
+  class BLOCK stop;

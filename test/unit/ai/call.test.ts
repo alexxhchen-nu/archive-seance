@@ -30,3 +30,18 @@ describe('callModel', () => {
     expect(() => assertPrivacy('public', 'in_cloud')).not.toThrow();
   });
 });
+
+describe('assertModeHonored', () => {
+  it('rejects a cloud result for only_on_device and an on-device result for only_in_cloud', async () => {
+    const { assertModeHonored, ModeViolationError } = await import('../../../src/ai/call');
+    expect(() => assertModeHonored('only_on_device', 'in_cloud')).toThrow(ModeViolationError);
+    expect(() => assertModeHonored('only_in_cloud', 'on_device')).toThrow(ModeViolationError);
+  });
+  it('accepts either source for prefer_on_device and the matching source otherwise', async () => {
+    const { assertModeHonored } = await import('../../../src/ai/call');
+    expect(() => assertModeHonored('prefer_on_device', 'in_cloud')).not.toThrow();
+    expect(() => assertModeHonored('prefer_on_device', 'on_device')).not.toThrow();
+    expect(() => assertModeHonored('only_on_device', 'on_device')).not.toThrow();
+    expect(() => assertModeHonored('only_in_cloud', 'in_cloud')).not.toThrow();
+  });
+});

@@ -82,7 +82,9 @@ export function mountHybridProbePanel(root: HTMLElement, ctl: ProbeController): 
   const relList = el('ul', { 'data-testid': 'relations' });
   const json = el('pre', { 'data-testid': 'result-json' });
   const err = el('p', { class: 'error', role: 'alert', 'data-testid': 'probe-error' });
-  card.append(badge, meta, el('h3', {}, 'Entities'), entList, el('h3', {}, 'Relations'), relList, json, err);
+  const resultBody = el('div', { 'data-testid': 'result-body' });
+  resultBody.append(meta, el('h3', {}, 'Entities'), entList, el('h3', {}, 'Relations'), relList, json);
+  card.append(badge, resultBody, err);
 
   root.append(chips, controls, configNote, card, el('footer', {}, 'Machine-extracted; verify against source.'));
 
@@ -101,6 +103,7 @@ export function mountHybridProbePanel(root: HTMLElement, ctl: ProbeController): 
     badge.hidden = !r;
     badge.className = `badge ${r?.source === 'in_cloud' ? 'cloud' : 'ondevice'}`;
     card.hidden = !r && !s.error;
+    resultBody.hidden = !r;
     modeReq.textContent = r?.requestedMode ?? '';
     latency.textContent = r ? `${Math.round(r.ms)} ms` : '';
     entList.replaceChildren(...(r?.entities ?? []).map((e) => el('li', {}, `${e.name} (${e.type}): “${e.quote}”`)));
