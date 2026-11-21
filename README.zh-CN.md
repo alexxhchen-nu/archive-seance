@@ -140,7 +140,7 @@ flowchart LR
 
 **不用 Firebase，先试 mock 版（带脚本）。**
 
-1. 克隆仓库并进入目录：`git clone <repository-url> && cd archive-seance`。
+1. 克隆仓库并进入目录：`git clone https://github.com/alexxhchen-nu/archive-seance.git && cd archive-seance`。
 2. 安装依赖：`npm ci`。
 3. 构建 mock 版：`npm run build:mock`。
 4. 打开 `chrome://extensions`，打开**开发者模式**，点击**加载已解压的扩展程序**，选择 `dist-mock/` 文件夹。

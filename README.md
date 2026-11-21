@@ -140,7 +140,7 @@ You need Node.js 20 or later and Chrome 139 or later. Gemini Nano also needs eno
 
 **Try it without Firebase (scripted mock).**
 
-1. Clone the repository and open it: `git clone <repository-url> && cd archive-seance`.
+1. Clone the repository and open it: `git clone https://github.com/alexxhchen-nu/archive-seance.git && cd archive-seance`.
 2. Install dependencies: `npm ci`.
 3. Build the mock flavor: `npm run build:mock`.
 4. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and choose the `dist-mock/` folder.
