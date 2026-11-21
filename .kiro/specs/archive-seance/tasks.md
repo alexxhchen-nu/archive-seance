@@ -33,7 +33,7 @@ Cut order if behind: R16 export → R15 multi-doc → R14 OCR → R11 Remote Con
 - [x] **T13b [11/22] Persist page index and bundle pdf.js font data** — IndexedDB `seance` cache of pages and chunks, keyed by SHA-256; schema version; clear/evict; "Served from cache" UI. Bundle pdfjs-dist standard_fonts, cmaps and wasm at build time and pass the URLs into getDocument. Req: R2.4 (page index only; mentions land in T17).
 - [x] **T14 [11/22] Chunker** — `chunker.ts` (Intl.Segmenter, max chars, never crosses pages) + property tests. Req: R2.2.
 - [ ] **T15 [11/22] Availability probe and models** — `src/ai/availability.ts`, `src/ai/firebase.ts`, `src/ai/models.ts`, `src/ai/call.ts` (timeout, retry, `inferenceSource` capture, privacy invariant). Req: R3.1, R3.6–3.7, R4.8, R12.1.
-- [ ] **T16 [11/22] Router** — `src/ai/router.ts` + exhaustive table test + property test "sensitive never cloud". Req: R4.1–4.7.
+- [x] **T16 [11/22] Router** — `src/ai/router.ts` + exhaustive table test + property test "sensitive never cloud". Req: R4.1–4.7.
 - [ ] **T17 [11/23] Prompts and extraction pipeline** — `prompts.ts`, `locateQuote.ts` (+ tests), `runExtraction.ts` on the **local route only**; mentions with anchors stored in IndexedDB; `droppedUnanchored` counter. Req: R3.2–3.5, R2.4.
 - [ ] **T17a [11/23] Labeled eval fixture** — Add `test/fixtures/eval/` with gold mentions and relations for one short neutral public PDF from `docs/DEMO_SOURCES.md`. Do not invent accuracy numbers. Leave `docs/EVAL.md` as "not yet measured" until T37. Req: R17.1, R17.4. playbook
 - [ ] **T18 [11/23] Similarity and merge (pure)** — `similarity.ts`, `confidence.ts`, `cluster.ts` per design section 7, with worked-example tests and the seven fast-check properties. Req: R7.1–7.5, R7.8.
