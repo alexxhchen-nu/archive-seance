@@ -8,7 +8,7 @@ Deadlines that drive this plan (all verified from the official rules on 2026-11-
 - Kiro credit request form (optional, 4,000 credits) closes **Tue 12/1 12:00 pm PT = 2:00 pm Chicago**; codes must be redeemed by 12/4.
 - Firebase quota sprint 3 (optional extra model access) request closes **Wed 11/25 10:00 am PT = 12:00 pm Chicago**. The free tier is enough for this project; skip unless blocked.
 
-Cut order if behind: R16 export → R15 multi-doc → R14 OCR → R11 Remote Config. Never cut: R3, R4, R5, R7, R8, R9, R10, R13.
+Cut order if behind: design §7.4 ghost "breathing" animation (T31; a static dashed ring + opacity satisfies R7.4) → R16 export → R15 multi-doc → R14 OCR → R11 Remote Config. Never cut: R3, R4, R5, R7, R8, R9, R10, R13.
 
 ---
 
