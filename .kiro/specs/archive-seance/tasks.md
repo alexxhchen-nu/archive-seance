@@ -43,7 +43,7 @@ Cut order if behind: design §7.4 ghost "breathing" animation (T31; a static das
 
 ## Phase 2 — Network and cloud path (Tue 11/24 – Wed 11/25)
 
-- [ ] **T21 [11/24] Graph model** — `src/graph/toGraph.ts` (entities/relations → nodes/links with evidence counts), unit tests. Req: R8.4.
+- [x] **T21 [11/24] Graph model** — `src/graph/toGraph.ts` (entities/relations → nodes/links with evidence counts), unit tests. Req: R8.4.
 - [ ] **T22 [11/24] GraphView (D3)** — force layout, zoom/pan/drag, size by mentions, shape by type, legend, search, filters, ghost rendering (opacity formula, dashed ring), incremental update so the network grows as chunks finish. Req: R8.1–8.3, R7.4, R8.6–8.7.
 - [ ] **T23 [11/24] Viewer and highlight** — `PdfViewer.ts` (pdf.js, bundled worker), `spanMapper.ts` + property tests, `goTo({page,start,end})`, fallback banner. Req: R9.1–9.5.
 - [ ] **T24 [11/24] Wire node/edge click → evidence → viewer** — Evidence panel; viewer selection → node highlight. Req: R9.1–9.6. **Milestone M2: click a node, see the source sentence highlighted.**

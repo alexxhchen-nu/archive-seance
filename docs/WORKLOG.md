@@ -5,6 +5,14 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — T21: graph model (`toGraph`)
+
+- **What was done:** `src/graph/toGraph.ts` adds a pure `toGraph(entities, mentions, relations)` that returns `{ nodes, links, dropped }`. Nodes carry id, entityId, type, label, mention count, solid/ghost, confidence, evidence refs (docId, page, start, end, quote), evidenceCount, and route tags (`on_device` / `in_cloud` / `mixed`) for R8.5. Entities with no anchored mention are dropped (R8.4). Relation endpoints are resolved by `candidateKey` of the subject/object surface to the node that contains that key, so merged aliases remap to the canonical node. Dangling, self-loop and unanchored relations are dropped and counted. `SYMMETRIC_LABELS` (imported from `src/eval/score.ts`) are deduped into one undirected link. Evidence is deduplicated by (docId, page, start, end) and `evidenceCount` is the number of distinct anchors. Output is sorted by id.
+- **Id rule:** node id = `n:` + the smallest candidate key among the entity's evidenced members, so it does not depend on `Entity.id` or input order. Link id = `l:label:src>dst` (directed) or `l:label:min|max` (symmetric). **Limitation:** a node id still changes when a cluster absorbs a member whose key sorts before all current keys (the same weakness as `buildEntities`' `c.keys[0]`). T22 should treat that as a node replacement, or carry a node-id alias map. `merge.ts` is unchanged.
+- **Assumptions:** a surface that resolves to more than one node is treated as dangling. The console demo JSON is unchanged.
+- **Tests (worktree after npm ci; will confirm on a fresh clone):** typecheck, lint, `npm test` 760 passed / 1 skipped, `npm run build`, `npm run build:mock`, e2e **62/62**, `check:secrets`, `check:bundle-rhc`. T21 ticked.
+- **Who:** Grok Workhorse (implementation); Grok Bot (review and verification).
+
 ## 2026-11-21 — Spec: T20 follow-up decisions from Bloks (cut order)
 
 - **What was done:** Applied Bloks's `spec-t20.patch`: the design §7.4 ghost "breathing" animation (T31) is now first in the cut order; a static dashed ring + opacity already satisfies R7.4. Bloks's answers to the other T20 questions needed no spec change: Confirm/Split/Not sure and persist-by-hash belong to T32; the demo stays `cloudEnabled: false` (cloud path is T27, no-Nano prompt is T33); merge-threshold overrides belong to T29 (Settings panel required, ghost < auto), and T32's ghost card shows the current thresholds and their source.
