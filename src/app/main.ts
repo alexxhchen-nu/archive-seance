@@ -5,6 +5,8 @@ import { mountOpenPdfPanel } from './panels/OpenPdfPanel';
 import { loadAndIndex } from './loadAndIndex';
 import type { IndexSummary } from './loadAndIndex';
 import { downloadPredictions, runEvalExport } from './evalExport';
+import { downloadDemoPayload, runConsoleDemo } from './consoleDemo';
+import { mountConsoleDemoPanel } from './panels/ConsoleDemoPanel';
 import type { GenerateLike } from '../ai/call';
 import { DEFAULTS } from '../config/defaults';
 import { loadPdfFromFile, loadPdfFromUrl, requestHostPermission } from '../pdf/loadPdf';
@@ -34,7 +36,7 @@ async function boot(): Promise<void> {
   const root = document.getElementById('app');
   if (!root) return;
   mountPdf(root);
-  let ctl: ProbeController & { evalModel?: () => GenerateLike };
+  let ctl: ProbeController & { evalModel?: () => GenerateLike; demoModel?: () => GenerateLike };
   if (import.meta.env.MODE === 'mock') {
     const { createMockController } = await import('../ai/mock/mockFirebase');
     ctl = createMockController(location.search);
@@ -42,6 +44,27 @@ async function boot(): Promise<void> {
     const { createRealController } = await import('./realController');
     ctl = createRealController(import.meta.env);
   }
+  const base = ctl;
+  const demoModel = ctl.demoModel ?? ctl.evalModel;
+  mountConsoleDemoPanel(root, {
+    summon: async (onStatus) => {
+      if (!base.firebaseOk || !demoModel) throw new Error('Firebase config missing: copy .env.example to .env.local and rebuild');
+      if (!lastIndexed) throw new Error('Open a PDF before you Summon.');
+      // R3.8: this runs inside the Summon click, so it may initialize the on-device model.
+      let { availability } = await base.probeAvailability();
+      if (availability === 'downloadable' || availability === 'downloading') {
+        onStatus('Preparing on-device model…');
+        await base.enableDevice((p) => onStatus(`Downloading on-device model: ${Math.round(p * 100)}%`));
+        ({ availability } = await base.probeAvailability());
+      }
+      onStatus('Extracting on-device…');
+      return runConsoleDemo(lastIndexed, {
+        cfg: DEFAULTS, model: demoModel(),
+        env: () => ({ localAvailability: availability, online: navigator.onLine, localChunksUsed: 0 })
+      });
+    },
+    download: (p) => downloadDemoPayload(p)
+  });
   const evalModel = ctl.evalModel;
   if (ctl.firebaseOk && evalModel) {
     const flavor = import.meta.env.MODE === 'mock' ? 'mock' : 'real';

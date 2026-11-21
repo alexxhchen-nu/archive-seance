@@ -39,7 +39,7 @@ Cut order if behind: R16 export → R15 multi-doc → R14 OCR → R11 Remote Con
   - Update (11/21, Alex chose A): gold = short quotes from 1–2 pages of the NHPRC public-domain PDF, AI-drafted, `reviewedBy`/`reviewedAt` fields empty until Alex reviews (~20–30 min). Keep the synthetic fixture as a smoke test. **Gate:** T37 may not measure until Alex has reviewed. Req: R17.1, R17.1a.
 - [x] **T18 [11/23] Similarity and merge (pure)** — `similarity.ts`, `confidence.ts`, `cluster.ts` per design section 7, with worked-example tests and the seven fast-check properties. Req: R7.1–7.5, R7.8.
 - [ ] **T19 [11/23] Hook: property tests on merge** — enable the "merge property tests" hook (see `.kiro/hooks/`) and run it at least once with a deliberately broken threshold to show it catching the bug (screenshot for the Kiro write-up). Record any *real* defect (input, wrong behavior, fix) in `docs/PBT_FINDINGS.md`; if none has been found yet, leave "not yet found" and re-check in T37. Req: NFR5, R17.5. Owner: Alex. playbook
-- [ ] **T20 [11/23] Console demo** — a debug page that runs T17+T18 on a fixture PDF and dumps entities (solid/ghost) as JSON. **Milestone M1: local extraction works end-to-end on a demo PDF, offline.** Req: R3, R7.
+- [x] **T20 [11/23] Console demo** — a debug page that runs T17+T18 on a fixture PDF and dumps entities (solid/ghost) as JSON. **Milestone M1: local extraction works end-to-end on a demo PDF, offline.** Req: R3, R7. Mock-build acceptance met (offline e2e on `harbor-eval-minutes.pdf`). M1 on a real demo PDF with on-device Gemini Nano still needs Alex to run it in Chrome.
 
 ## Phase 2 — Network and cloud path (Tue 11/24 – Wed 11/25)
 

@@ -132,7 +132,8 @@ Green is built (the model call and its JSON schema). Dashed grey is specified in
 | Secret guard for tracked files and git history | Built | `npm run check:secrets`. |
 | Real Gemini Nano inference | **Not verified** | Needs Chrome 139+ with the model downloaded on a supported machine. |
 | Real cloud inference through Firebase and App Check | **Not verified** | Needs a Firebase project with AI Logic and an App Check debug token. |
-| PDF loading, extraction pipeline, merge, D3 graph, jump-to-source | Not built | See the [task plan](.kiro/specs/archive-seance/tasks.md). |
+| PDF loading, local extraction and merge (console demo) | Built (mock verified) | Unit tests plus offline Playwright e2e on `dist-mock/` with `harbor-eval-minutes.pdf`. Real on-device Nano on a demo PDF is not yet verified (Alex, Chrome). |
+| D3 graph, jump-to-source | Not built | See the [task plan](.kiro/specs/archive-seance/tasks.md) (T22–T23). |
 
 ## Install
 
@@ -145,6 +146,7 @@ You need Node.js 20 or later and Chrome 139 or later. Gemini Nano also needs eno
 3. Build the mock flavor: `npm run build:mock`.
 4. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and choose the `dist-mock/` folder.
 5. Click the Archive Séance toolbar icon. Add `?device=unavailable` to the page URL to script a machine with no Gemini Nano.
+6. In **Console demo (debug)**, open `test/fixtures/eval/harbor-eval-minutes.pdf` and click **Summon**. You should see solid and ghost entities (confidence, page + quote) and a JSON dump, with **Copy JSON** / **Download JSON**.
 
 **Run it against your own Firebase project.**
 
@@ -152,7 +154,7 @@ You need Node.js 20 or later and Chrome 139 or later. Gemini Nano also needs eno
 2. Copy `.env.example` to `.env.local`, then fill in `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_PROJECT_ID`, and `VITE_FIREBASE_APP_ID`. Leave `VITE_APPCHECK_DEBUG_TOKEN` empty the first time.
 3. Run `npm run build` and load `dist/` as an unpacked extension.
 4. Open the app page and the DevTools console. The SDK prints an App Check debug token. Register it under **App Check → Apps → Manage debug tokens**, then paste it into `.env.local` and rebuild.
-5. Click **Enable on-device AI** (downloads Gemini Nano if needed), then run each of the three buttons and read the badge.
+5. Click **Enable on-device AI** if needed (or just **Summon** — that click may also initialize the model), open a demo PDF, and click **Summon** in the console demo card. The three probe buttons still exercise hybrid modes.
 
 `.env.local` is ignored by git. Never commit a debug token, an API key, or a service-account key.
 
