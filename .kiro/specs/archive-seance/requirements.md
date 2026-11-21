@@ -221,7 +221,8 @@ Acceptance criteria:
 **User story:** As the entrant, I want precision, recall, timings, and property-test findings from real runs, so that judge answers use only measured numbers.
 
 Acceptance criteria:
-1. THE REPOSITORY SHALL contain a hand-labeled fixture under `test/fixtures/eval/` derived from a neutral public-archive PDF listed in `docs/DEMO_SOURCES.md`, with gold mentions and relations.
+1. THE REPOSITORY SHALL contain an eval fixture under `test/fixtures/eval/` built from short quotes taken from 1–2 pages of the NHPRC public-domain PDF listed in `docs/DEMO_SOURCES.md`, with gold mentions and relations. The gold labels MAY be drafted by AI but SHALL be reviewed by the author before any measured run; the fixture SHALL record the reviewer and review date. The synthetic fixture SHALL remain as a smoke test only and SHALL NOT be used for numbers in `docs/EVAL.md`.
+1a. IF the gold labels have not been reviewed, THEN `npm run eval` SHALL refuse to write accuracy numbers to `docs/EVAL.md`.
 2. `npm run eval` SHALL compare pipeline output to the gold labels and write precision and recall for entities and for relations to `docs/EVAL.md`, including the fixture id, the date, the machine, and the git SHA. THE FILE SHALL NOT contain placeholder or invented numbers.
 3. THE SAME evaluation pass (or `npm run eval:timing`) SHALL record wall-clock time for a local-only run and a cloud-enabled run of the same document, on a named machine, in `docs/EVAL.md`.
 4. IF a measurement has not yet been run, THE FILE SHALL say "not yet measured", and no numeric accuracy or timing claim SHALL appear in the README, the video script, or the Devpost text.
