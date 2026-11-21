@@ -1,0 +1,786 @@
+{
+  "fixtureId": "nhprc-2015-11-p1-p2",
+  "source": {
+    "title": "National Historical Publications and Records Commission, Executive Summary Minutes of November 6, 2015",
+    "url": "https://www.archives.gov/files/nhprc/about/meetings/2015-11-minutes.pdf",
+    "sourcePage": "https://www.archives.gov/nhprc/about/meetings",
+    "sha256": "ecb7abc7009f6e7fe95187c483c795100dd0fa375a51640c210eedd7c5be2fd9",
+    "pages": [
+      1,
+      2
+    ],
+    "license": "US government work, public domain in the United States under 17 U.S.C. § 105"
+  },
+  "textSource": "public-domain-quotes",
+  "labeling": "AI-drafted by Grok Bot on 2026-11-21 from pages 1–2 of the source PDF (pdf.js page text). Pending human review by Alex. Do not use for measured EVAL numbers until reviewed.",
+  "reviewedBy": null,
+  "reviewedAt": null,
+  "entities": [
+    {
+      "id": "david-s-ferriero",
+      "name": "David S. Ferriero",
+      "type": "person",
+      "aliases": [
+        "Mr. Ferriero",
+        "David S. Ferriero, chairman",
+        "David S. Ferriero, Chairperson"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "The meeting was called to order by David S. Ferriero, chairman"
+        },
+        {
+          "page": 1,
+          "quote": "Commission Members present: David S. Ferriero, Chairperson"
+        },
+        {
+          "page": 1,
+          "quote": "Mr. Ferriero welcomed everyone to the meeting"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Ferriero called for adoption of the agenda"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Ferriero said the plan was an opportunity to codify his belief"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Ferriero pointed to the President’s Open Government initiatives"
+        }
+      ]
+    },
+    {
+      "id": "w-eric-emerson",
+      "name": "W. Eric Emerson",
+      "type": "person",
+      "aliases": [
+        "Mr. Emerson"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "W. Eric Emerson"
+        },
+        {
+          "page": 2,
+          "quote": "Ms. Mahan and Mr. Emerson expressed some concern"
+        }
+      ]
+    },
+    {
+      "id": "peter-gottlieb",
+      "name": "Peter Gottlieb",
+      "type": "person",
+      "aliases": [
+        "Mr. Gottlieb"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Peter Gottlieb"
+        },
+        {
+          "page": 2,
+          "quote": "The plan, Mr. Gottlieb said, indicates that this is not business as usual"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Gottlieb said that this adds a layer of context and background to the plan"
+        }
+      ]
+    },
+    {
+      "id": "karen-jefferson",
+      "name": "Karen Jefferson",
+      "type": "person",
+      "aliases": [
+        "Ms. Jefferson"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Karen Jefferson"
+        },
+        {
+          "page": 2,
+          "quote": "Ms. Jefferson liked the new mission and vision"
+        }
+      ]
+    },
+    {
+      "id": "erin-mahan",
+      "name": "Erin Mahan",
+      "type": "person",
+      "aliases": [
+        "Ms. Mahan"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Erin Mahan"
+        },
+        {
+          "page": 2,
+          "quote": "as Ms. Mahan offered, we are not substituting the work of volunteers"
+        },
+        {
+          "page": 2,
+          "quote": "Ms. Mahan and Mr. Emerson expressed some concern"
+        }
+      ]
+    },
+    {
+      "id": "kaye-lanning-minchew",
+      "name": "Kaye Lanning Minchew",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Kaye Lanning Minchew"
+        }
+      ]
+    },
+    {
+      "id": "naomi-nelson",
+      "name": "Naomi Nelson",
+      "type": "person",
+      "aliases": [
+        "Ms. Nelson"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Naomi Nelson"
+        },
+        {
+          "page": 2,
+          "quote": "Ms. Nelson pointed to the importance of collaboration with other funders"
+        }
+      ]
+    },
+    {
+      "id": "stephen-p-randolph",
+      "name": "Stephen P. Randolph",
+      "type": "person",
+      "aliases": [
+        "Stephen Randolph",
+        "Mr. Randolph"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Stephen P. Randolph"
+        },
+        {
+          "page": 2,
+          "quote": "a memo on a proposed “Course of Action” by Stephen Randolph"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Randolph stated that this plan moves the Commission to a more proactive role"
+        }
+      ]
+    },
+    {
+      "id": "raymond-smock",
+      "name": "Raymond Smock",
+      "type": "person",
+      "aliases": [
+        "Mr. Smock"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Raymond Smock"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Smock agreed that leadership was important"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Smock asked where the new money would come from"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Smock agreed, saying that certain aspects of professional work can only be done by professionals"
+        }
+      ]
+    },
+    {
+      "id": "george-miles",
+      "name": "George Miles",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Via teleconference George Miles"
+        }
+      ]
+    },
+    {
+      "id": "william-g-thomas-iii",
+      "name": "William G. Thomas, III",
+      "type": "person",
+      "aliases": [
+        "Mr. Thomas",
+        "William G. Thomas III"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "William G. Thomas, III"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Thomas expressed his enthusiasm for the new plan"
+        },
+        {
+          "page": 2,
+          "quote": "Mr. Thomas suggested that we emphasize greater public participation in archives"
+        }
+      ]
+    },
+    {
+      "id": "kathleen-williams",
+      "name": "Kathleen Williams",
+      "type": "person",
+      "aliases": [
+        "Ms. Williams"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Kathleen Williams, Executive Director"
+        },
+        {
+          "page": 2,
+          "quote": "Ms. Williams agreed that we have to be creative in finding additional resources"
+        },
+        {
+          "page": 2,
+          "quote": "Ms. Williams said that we will need three things to make it work"
+        }
+      ]
+    },
+    {
+      "id": "lucy-barber",
+      "name": "Lucy Barber",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Lucy Barber"
+        }
+      ]
+    },
+    {
+      "id": "keith-donohue",
+      "name": "Keith Donohue",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Keith Donohue"
+        }
+      ]
+    },
+    {
+      "id": "alexander-lorch",
+      "name": "Alexander Lorch",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Alexander Lorch"
+        }
+      ]
+    },
+    {
+      "id": "darrell-meadows",
+      "name": "Darrell Meadows",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Darrell Meadows"
+        }
+      ]
+    },
+    {
+      "id": "nancy-melley",
+      "name": "Nancy Melley",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Nancy Melley"
+        }
+      ]
+    },
+    {
+      "id": "daniel-a-stokes",
+      "name": "Daniel A. Stokes",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Daniel A. Stokes"
+        }
+      ]
+    },
+    {
+      "id": "robyn-engibous",
+      "name": "Robyn Engibous",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Robyn Engibous, for Senator Daniel Sullivan"
+        }
+      ]
+    },
+    {
+      "id": "daniel-sullivan",
+      "name": "Daniel Sullivan",
+      "type": "person",
+      "aliases": [
+        "Senator Daniel Sullivan"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "for Senator Daniel Sullivan"
+        }
+      ]
+    },
+    {
+      "id": "christopher-brick",
+      "name": "Christopher Brick",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Christopher Brick, Editor, the Eleanor Roosevelt Papers"
+        }
+      ]
+    },
+    {
+      "id": "barbara-teague",
+      "name": "Barbara Teague",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Barbara Teague, Library of Virginia"
+        }
+      ]
+    },
+    {
+      "id": "lee-white",
+      "name": "Lee White",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Lee White, National Coalition for History"
+        }
+      ]
+    },
+    {
+      "id": "meg-phillips",
+      "name": "Meg Phillips",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Meg Phillips, NARA External Affairs"
+        }
+      ]
+    },
+    {
+      "id": "shawn-morton",
+      "name": "Shawn Morton",
+      "type": "person",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Shawn Morton, NARA Congressional Affairs"
+        }
+      ]
+    },
+    {
+      "id": "nhprc",
+      "name": "National Historical Publications and Records Commission",
+      "type": "org",
+      "aliases": [
+        "NHPRC",
+        "the Commission"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "National Historical Publications and Records Commission"
+        },
+        {
+          "page": 1,
+          "quote": "NHPRC staff present"
+        },
+        {
+          "page": 1,
+          "quote": "efforts from the House Oversight Committee to use NHPRC funds"
+        },
+        {
+          "page": 1,
+          "quote": "brought the Commission up to date"
+        },
+        {
+          "page": 2,
+          "quote": "the relationship between the National Archives and NHPRC has to be preserved"
+        },
+        {
+          "page": 2,
+          "quote": "the Commission is separate and independent from the National Archives"
+        },
+        {
+          "page": 2,
+          "quote": "“re- branding” the work of the Commission"
+        },
+        {
+          "page": 2,
+          "quote": "expanding the role of the NHPRC without expanding resources"
+        }
+      ]
+    },
+    {
+      "id": "national-archives",
+      "name": "National Archives",
+      "type": "org",
+      "aliases": [
+        "the National Archives"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "in the Archivist’s Board Room of the National Archives in Washington, DC"
+        },
+        {
+          "page": 2,
+          "quote": "the relationship between the National Archives and NHPRC has to be preserved"
+        },
+        {
+          "page": 2,
+          "quote": "the Commission is separate and independent from the National Archives"
+        },
+        {
+          "page": 2,
+          "quote": "plays an important role in what the National Archives does"
+        }
+      ]
+    },
+    {
+      "id": "house-oversight-committee",
+      "name": "House Oversight Committee",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "efforts from the House Oversight Committee to use NHPRC funds"
+        }
+      ]
+    },
+    {
+      "id": "eleanor-roosevelt-papers",
+      "name": "Eleanor Roosevelt Papers",
+      "type": "org",
+      "aliases": [
+        "the Eleanor Roosevelt Papers"
+      ],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Christopher Brick, Editor, the Eleanor Roosevelt Papers"
+        }
+      ]
+    },
+    {
+      "id": "library-of-virginia",
+      "name": "Library of Virginia",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Barbara Teague, Library of Virginia"
+        }
+      ]
+    },
+    {
+      "id": "national-coalition-for-history",
+      "name": "National Coalition for History",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Lee White, National Coalition for History"
+        }
+      ]
+    },
+    {
+      "id": "nara-external-affairs",
+      "name": "NARA External Affairs",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Meg Phillips, NARA External Affairs"
+        }
+      ]
+    },
+    {
+      "id": "nara-congressional-affairs",
+      "name": "NARA Congressional Affairs",
+      "type": "org",
+      "aliases": [],
+      "mentions": [
+        {
+          "page": 1,
+          "quote": "Shawn Morton, NARA Congressional Affairs"
+        }
+      ]
+    },
+    {
+      "id": "strategic-planning-committee",
+      "name": "Strategic Planning Committee",
+      "type": "org",
+      "aliases": [
+        "the Strategic Planning Committee",
+        "the Planning Committee",
+        "Planning Committee"
+      ],
+      "mentions": [
+        {
+          "page": 2,
+          "quote": "On behalf of the Strategic Planning Committee"
+        },
+        {
+          "page": 2,
+          "quote": "the work of the Planning Committee in revising the document"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "subject": "raymond-smock",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb Karen Jefferson Erin Mahan Kaye Lanning Minchew Naomi Nelson Stephen P. Randolph Raymond Smock"
+    },
+    {
+      "subject": "stephen-p-randolph",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb Karen Jefferson Erin Mahan Kaye Lanning Minchew Naomi Nelson Stephen P. Randolph"
+    },
+    {
+      "subject": "naomi-nelson",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb Karen Jefferson Erin Mahan Kaye Lanning Minchew Naomi Nelson"
+    },
+    {
+      "subject": "kaye-lanning-minchew",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb Karen Jefferson Erin Mahan Kaye Lanning Minchew"
+    },
+    {
+      "subject": "erin-mahan",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb Karen Jefferson Erin Mahan"
+    },
+    {
+      "subject": "karen-jefferson",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb Karen Jefferson"
+    },
+    {
+      "subject": "peter-gottlieb",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson Peter Gottlieb"
+    },
+    {
+      "subject": "w-eric-emerson",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero, Chairperson W. Eric Emerson"
+    },
+    {
+      "subject": "david-s-ferriero",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Commission Members present: David S. Ferriero"
+    },
+    {
+      "subject": "christopher-brick",
+      "object": "eleanor-roosevelt-papers",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "Christopher Brick, Editor, the Eleanor Roosevelt Papers"
+    },
+    {
+      "subject": "barbara-teague",
+      "object": "library-of-virginia",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "Barbara Teague, Library of Virginia"
+    },
+    {
+      "subject": "lee-white",
+      "object": "national-coalition-for-history",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Lee White, National Coalition for History"
+    },
+    {
+      "subject": "meg-phillips",
+      "object": "nara-external-affairs",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "Meg Phillips, NARA External Affairs"
+    },
+    {
+      "subject": "shawn-morton",
+      "object": "nara-congressional-affairs",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "Shawn Morton, NARA Congressional Affairs"
+    },
+    {
+      "subject": "robyn-engibous",
+      "object": "daniel-sullivan",
+      "label": "communicated-with",
+      "page": 1,
+      "quote": "Robyn Engibous, for Senator Daniel Sullivan"
+    },
+    {
+      "subject": "stephen-p-randolph",
+      "object": "strategic-planning-committee",
+      "label": "member-of",
+      "page": 2,
+      "quote": "by Stephen Randolph. On behalf of the Strategic Planning Committee"
+    },
+    {
+      "subject": "george-miles",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Via teleconference George Miles William G. Thomas, III"
+    },
+    {
+      "subject": "william-g-thomas-iii",
+      "object": "nhprc",
+      "label": "member-of",
+      "page": 1,
+      "quote": "Via teleconference George Miles William G. Thomas, III"
+    },
+    {
+      "subject": "kathleen-williams",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams"
+    },
+    {
+      "subject": "lucy-barber",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams, Executive Director Lucy Barber"
+    },
+    {
+      "subject": "keith-donohue",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams, Executive Director Lucy Barber Keith Donohue"
+    },
+    {
+      "subject": "alexander-lorch",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams, Executive Director Lucy Barber Keith Donohue Alexander Lorch"
+    },
+    {
+      "subject": "darrell-meadows",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams, Executive Director Lucy Barber Keith Donohue Alexander Lorch Darrell Meadows"
+    },
+    {
+      "subject": "nancy-melley",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams, Executive Director Lucy Barber Keith Donohue Alexander Lorch Darrell Meadows Nancy Melley"
+    },
+    {
+      "subject": "daniel-a-stokes",
+      "object": "nhprc",
+      "label": "employed-by",
+      "page": 1,
+      "quote": "NHPRC staff present: Kathleen Williams, Executive Director Lucy Barber Keith Donohue Alexander Lorch Darrell Meadows Nancy Melley Daniel A. Stokes"
+    }
+  ],
+  "notEntities": [
+    "November",
+    "November 6, 2015",
+    "November 2015",
+    "Washington, DC",
+    "Archivist’s Board Room",
+    "Continuing Resolution",
+    "FY 2016",
+    "December 11",
+    "Strategic Planning Framework",
+    "Course of Action",
+    "Open Government",
+    "Federal Government",
+    "May 2015",
+    "Executive Summary Minutes"
+  ]
+}

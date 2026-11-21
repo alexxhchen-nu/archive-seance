@@ -16,6 +16,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
+    "eval": "node scripts/eval.mjs",
+    "verify:nhprc-eval": "node scripts/verify-nhprc-eval.mjs",
     "check:secrets": "node scripts/check-secrets.mjs",
     "check:bundle-rhc": "node scripts/check-bundle-rhc.mjs"
   },
