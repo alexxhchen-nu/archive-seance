@@ -213,6 +213,24 @@ describe('runExtraction (local route)', () => {
     expect(await getMentions('persist')).toEqual(r.mentions);
   });
 
+  it('R3.4a: drops an entity whose name is not inside its located quote; relations need only a located quote', async () => {
+    const text = 'Mrs. Marlow met with Marta Quill at the hall.';
+    const { d } = deps([ok(json(
+      [
+        { name: 'Edith Marlow', type: 'person', quote: 'Mrs. Marlow met with Marta Quill' },
+        { name: 'marta   quill', type: 'person', quote: 'Mrs. Marlow met with Marta Quill' }
+      ],
+      [
+        { subject: 'Edith Marlow', object: 'marta   quill', label: 'met-with', quote: 'Mrs. Marlow met with Marta Quill' }
+      ]
+    ))]);
+    const r = await runExtraction(tiny([text]), d);
+    expect(r.droppedUnanchored).toBe(1);
+    expect(r.mentions.map((m) => m.surface)).toEqual(['marta   quill']);
+    expect(r.relations).toHaveLength(1);
+    expect(r.relations[0]).toMatchObject({ subject: 'Edith Marlow', object: 'marta   quill', label: 'met-with' });
+  });
+
   it('keeps relations between returned entities and drops unknown endpoints or unanchored quotes', async () => {
     const text = 'Edric Fenwick met with Marta Quill at the hall.';
     const { d } = deps([ok(json(

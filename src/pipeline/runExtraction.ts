@@ -12,6 +12,7 @@ import type {
   InferenceSourceTag, Mention, PageText, Sensitivity
 } from '../types';
 import { locateQuote } from './locateQuote';
+import { nameInQuote } from './nameInQuote';
 
 export interface ExtractionInput {
   docId: string;
@@ -155,7 +156,7 @@ export async function runExtraction(input: ExtractionInput, deps: ExtractionDeps
     };
     for (const ent of out.entities) {
       const a = anchorOf(ent.quote);
-      if (!a) { result.droppedUnanchored++; continue; }
+      if (!a || !nameInQuote(ent.name, a.anchor.quote)) { result.droppedUnanchored++; continue; }
       const { start, end } = a.anchor;
       const id = await sha256(JSON.stringify([docId, chunk.page, start, end, ent.type, nameKey(ent.name, ent.type)]));
       if (seen.has(id)) { result.duplicateMentions++; continue; }

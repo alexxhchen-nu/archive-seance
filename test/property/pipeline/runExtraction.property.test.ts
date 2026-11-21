@@ -7,6 +7,7 @@ import { validateExtraction } from '../../../src/ai/validators';
 import { DEFAULTS } from '../../../src/config/defaults';
 import { chunkPages } from '../../../src/pdf/chunker';
 import { locateQuote } from '../../../src/pipeline/locateQuote';
+import { nameInQuote } from '../../../src/pipeline/nameInQuote';
 import { runExtraction } from '../../../src/pipeline/runExtraction';
 import type { ExtractionInput } from '../../../src/pipeline/runExtraction';
 import type { PageText, Sensitivity } from '../../../src/types';
@@ -64,7 +65,7 @@ describe('runExtraction invariants', () => {
         const chunkStart = TEXT.indexOf(chunkText);
         for (const e of v.value.entities) {
           const span = locateQuote(chunkText, chunkStart, e.quote);
-          if (span) expectedAnchors.push(`${span.start}-${span.end}`);
+          if (span && nameInQuote(e.name, TEXT.slice(span.start, span.end))) expectedAnchors.push(`${span.start}-${span.end}`);
         }
       }
       expect(r.droppedUnanchored + r.mentions.length + r.duplicateMentions + r.relations.length).toBe(produced);
@@ -118,6 +119,21 @@ describe('runExtraction invariants', () => {
       }
       expect(model.prompts.length).toBe(local);
       expect(r.chunks.local).toBe(local);
+    }), { numRuns: numRuns(150) });
+  });
+
+  it('(6) R3.4a: a kept mention\'s name appears in its quote; name-not-in-quote entities are dropped', async () => {
+    await fc.assert(fc.asyncProperty(fc.array(entity, { minLength: 1, maxLength: 6 }), async (ents) => {
+      const text = JSON.stringify({ entities: ents.map(({ name: n, type, quote: q }) => ({ name: n, type, quote: q })), relations: [] });
+      const r = await runExtraction(doc('sensitive', 1000), { cfg: DEFAULTS, model: fakeModel([{ text, source: 'on_device' }]), env: () => ENV });
+      for (const m of r.mentions) expect(nameInQuote(m.surface, m.anchor.quote)).toBe(true);
+      expect(r.droppedUnanchored + r.mentions.length + r.duplicateMentions).toBe(ents.length);
+      let shouldDrop = 0;
+      for (const e of ents) {
+        const span = locateQuote(TEXT, 0, e.quote);
+        if (!span || !nameInQuote(e.name, TEXT.slice(span.start, span.end))) shouldDrop++;
+      }
+      expect(r.droppedUnanchored).toBe(shouldDrop);
     }), { numRuns: numRuns(150) });
   });
 });

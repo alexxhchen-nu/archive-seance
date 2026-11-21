@@ -6,6 +6,7 @@ import type { GoldSet } from '../../../src/eval/score';
 import { chunkPages } from '../../../src/pdf/chunker';
 import { buildPageIndex } from '../../../src/pdf/pageIndex';
 import { locateQuote } from '../../../src/pipeline/locateQuote';
+import { nameInQuote } from '../../../src/pipeline/nameInQuote';
 import { runExtraction } from '../../../src/pipeline/runExtraction';
 import type { PageText } from '../../../src/types';
 import { chunkOf, fakeModel } from '../../helpers/fakeModel';
@@ -70,18 +71,30 @@ describe('eval gold fixture', () => {
     }
   });
 
+  it('R3.4a: every gold mention quote contains the canonical name or an alias (whitespace/case-normalized)', () => {
+    for (const e of gold.entities) {
+      const names = [e.name, ...e.aliases];
+      for (const m of e.mentions) {
+        expect(names.some((n) => nameInQuote(n, m.quote)), `${e.id} / ${e.name} in "${m.quote}"`).toBe(true);
+      }
+    }
+  });
+
   // Validates the HARNESS (fixture + pipeline + scorer), NOT model accuracy: the "model" returns the gold labels.
   it('harness check: gold fed as scripted model output scores precision = recall = 1', async () => {
     const pageOfChunk = (chunkText: string): number => pages.findIndex((p) => p.text.includes(chunkText)) + 1;
+    const surfaceInQuote = (e: GoldFile['entities'][number], quote: string): string =>
+      [e.name, ...e.aliases].find((n) => nameInQuote(n, quote)) ?? e.name;
     const model = fakeModel((prompt) => {
       const chunkText = chunkOf(prompt);
       const page = pageOfChunk(chunkText);
       const inChunk = (p: number, q: string): boolean => p === page && chunkText.includes(q);
-      const entities = gold.entities.flatMap((e) => e.mentions.filter((m) => inChunk(m.page, m.quote)).map((m) => ({ name: e.name, type: e.type, quote: m.quote })));
-      const nameOf = (id: string): string => gold.entities.find((e) => e.id === id)?.name ?? id;
+      const entities = gold.entities.flatMap((e) => e.mentions.filter((m) => inChunk(m.page, m.quote)).map((m) => ({ id: e.id, name: surfaceInQuote(e, m.quote), type: e.type, quote: m.quote })));
+      const surfaceOf = (id: string): string => entities.find((n) => n.id === id)?.name ?? gold.entities.find((e) => e.id === id)?.name ?? id;
       const relations = gold.relations.filter((r) => inChunk(r.page, r.quote))
-        .map((r) => ({ subject: nameOf(r.subject), object: nameOf(r.object), label: r.label, quote: r.quote }));
-      return { text: JSON.stringify({ entities, relations }), source: 'on_device' };
+        .map((r) => ({ subject: surfaceOf(r.subject), object: surfaceOf(r.object), label: r.label, quote: r.quote }));
+      const payload = { entities: entities.map(({ name, type, quote }) => ({ name, type, quote })), relations };
+      return { text: JSON.stringify(payload), source: 'on_device' };
     });
     const res = await runExtraction(
       { docId: gold.fixtureId, sensitivity: 'sensitive', pages, chunks: chunkPages(pages, DEFAULTS.routeLocalMaxChunkChars) },
