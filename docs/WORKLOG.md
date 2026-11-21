@@ -5,6 +5,23 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — PR #6: NHPRC gold draft for T17a / R17.1, eval review gate (open, not merged)
+
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/6. Branch `t17a-nhprc-gold`, from main `eda1d25` (PR #5 already merged). Not merged, not pushed to main.
+- **What was done**
+  - Applied Bloks’s R17 patch: R17.1 now requires short quotes from 1–2 pages of the NHPRC public-domain PDF, AI-drafted labels reviewed by the author, `reviewedBy` / `reviewedAt` on the fixture, and the synthetic fixture as a smoke test only. New R17.1a: `npm run eval` must refuse to write accuracy numbers while the gold is unreviewed. T17a gained an update line that T37 may not measure until Alex reviews. Existing R13.2 and T06 wording was kept. The R17 `tasks.md` hunk was merged by hand because this branch already had ticks and the T17a synthetic note.
+  - Pages 1–2 of the November 6, 2015 NHPRC Executive Summary Minutes were chosen as the densest in people, organizations, and stated relations (attendance and affiliations on page 1; the strategic-planning discussion on page 2).
+  - The official PDF is still not committed. The fixture is `test/fixtures/eval/nhprc-2015-11/`: `gold.json` (25 people, 9 organizations, 66 mentions, 25 relations, 14 non-entities) and `pages.json` (this repo’s pdf.js text of those two pages, public domain). `scripts/verify-nhprc-eval.mjs` fetches the official URL or takes `--pdf`, checks the SHA-256 in `docs/DEMO_SOURCES.md`, and compares a fresh extraction to `pages.json`. Ran successfully against the local copy (`ecb7abc7…`).
+  - Gold is marked AI-drafted, `reviewedBy: null`, `reviewedAt: null`. Review sheet: `docs/eval/NHPRC_GOLD_REVIEW.md`. `docs/EVAL.md` stays “not yet measured,” with an author-review checklist; the synthetic fixture is described as smoke-only. T37 is not ticked and no accuracy numbers were written.
+  - `src/eval/reviewGate.ts` and `npm run eval` implement the R17.1a refusal (exit 1, `docs/EVAL.md` untouched).
+- **Tests and results** (fresh clone; see the PR description)
+  - typecheck, lint, both builds, `build:mock` then e2e, `check:secrets`, `check:bundle-rhc`.
+  - `npm test` counts are in the PR description. `npm run eval` exits 1 and does not modify `docs/EVAL.md`.
+- **Who:** Grok Bot drafted the gold and the review sheet for Alex’s 20–30 minute review. No live model was called.
+- **Open items**
+  - Alex reviews `docs/eval/NHPRC_GOLD_REVIEW.md`, then sets `reviewedBy` / `reviewedAt`. T37 cannot measure until that is done.
+
+
 ## 2026-11-21 — PR #5: T16 router, T17 local extraction, T17a eval fixture, T18 merge, T19 PBT (open, not merged)
 
 - **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/5. Branch `t16-t19-extraction`, from main `c2ce14a` (PR #4 already merged). Not merged, not pushed to main.
