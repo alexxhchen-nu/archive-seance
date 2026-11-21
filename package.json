@@ -1,0 +1,33 @@
+{
+  "name": "archive-seance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome MV3 extension: public-archive PDFs to a source-linked network, with Firebase AI Logic hybrid inference.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "tsc --noEmit && vite build",
+    "build:mock": "tsc --noEmit && vite build --mode mock",
+    "e2e": "node scripts/e2e-extension.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:bundle-rhc": "node scripts/check-bundle-rhc.mjs"
+  },
+  "dependencies": {
+    "firebase": "13.4.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.3.7",
+    "fast-check": "4.10.3",
+    "jsdom": "31.0.1",
+    "playwright-core": "1.65.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.1"
+  }
+}

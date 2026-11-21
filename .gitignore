@@ -19,3 +19,6 @@ coverage/
 test-results/
 playwright-report/
 .e2e-profile/
+
+# mock-flavor build output
+dist-mock/

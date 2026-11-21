@@ -1,0 +1,10 @@
+export declare const API_KEY_RE: RegExp;
+export declare const DEBUG_TOKEN_LITERAL_RE: RegExp;
+export declare const UUID_RE: RegExp;
+export declare const UUID_CONTEXT_RE: RegExp;
+export declare function isEnvFile(path: string): boolean;
+export declare function isForbiddenTrackedPath(path: string): boolean;
+export declare function gitignoreIgnoresKiro(content: string): boolean;
+export declare function scanLine(path: string, line: string): string[];
+export declare function scanText(path: string, text: string): { path: string; line: number; rule: string }[];
+export declare function scanGitLog(logText: string): { commit: string; path: string; rule: string }[];
