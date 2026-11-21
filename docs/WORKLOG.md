@@ -5,6 +5,19 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — PR #7: T37a wire the R17.2 comparison pass for `npm run eval` (open, not merged)
+
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/7. Branch `t37a-eval-compare`, head `f6019d4`. **Stacked on PR #6** (`t17a-nhprc-gold`). Not merged, not pushed to main. T37 and T20 are not ticked. No accuracy, precision, recall or timing numbers were written; `docs/EVAL.md` still says “not yet measured”.
+- **What was done**
+  - `src/eval/predictions.ts`: `buildPredictions` (pure; from `runExtraction` output, entities merged with `buildEntities`, only page + anchored quote + surface kept), `validatePredictions` (schema, fixtureId match, refuses `build.flavor: "mock"`), `scorePredictions` (calls `scoreEntities` / `scoreRelations` from `score.ts`).
+  - `src/eval/evalDoc.ts`: replaces only the target mode's rows in the `docs/EVAL.md` table (idempotent; errors rather than appending if a row is missing).
+  - `src/app/evalExport.ts` + two “Export eval run” buttons on the probe panel: runs the local extraction pipeline on pages 1–2 of the opened PDF and downloads the JSON. The build flavor comes from `import.meta.env.MODE`; the git SHA is stamped by `vite.config.ts` as `VITE_GIT_SHA`.
+  - `scripts/eval.mjs`: R17.1a gate first (exit 1), then no `--predictions` exits 2 with export instructions, invalid file exits 3, mock run exits 4, else scores and writes rows. `EVAL_GOLD_PATH` kept; `EVAL_MD_PATH` added so tests use temp copies.
+  - `docs/EVAL.md`: added “How to measure”.
+- **Narrow interpretations (no spec change):** entity scoring uses every exported mention surface (as the existing harness test does), not only merged labels. “cloud-enabled” sets `cloudEnabled: true` for routing, but `runExtraction` still only runs local chunks (cloud chunks are counted as pending-cloud) because the cloud extraction path is not built yet. Timing is wall-clock of the extraction call only (excludes PDF load/index). Export refuses a PDF whose SHA-256 is not the NHPRC file in `docs/DEMO_SOURCES.md`. Measurement dates are written in America/Chicago.
+- **Tests:** typecheck, lint, `npm test` 749 passed / 1 skipped after the review follow-up (fresh clone of `f6019d4` had been 747 passed / 1 skipped, plus builds, e2e 55/55, `check:secrets`, `check:bundle-rhc`). No accuracy numbers written; T37 still unticked.
+- **Who:** Grok Workhorse (implementation); Grok Bot (review: SHA check, Chicago date, EVAL.md cloud-path note, refuse no-inference exports, mock export uses the controller probe; verification).
+
 ## 2026-11-21 — PR #6 follow-up: Alex reviewed the NHPRC gold
 
 - **What was done:** Alex reviewed `docs/eval/NHPRC_GOLD_REVIEW.md` and answered “全部keep” (keep all items, no edits). `gold.json` now has `reviewedBy: "Alex Chen"`, `reviewedAt: "2026-11-21"` and an updated `labeling` line. `docs/EVAL.md` checklist and the review sheet status were updated. `scripts/eval.mjs` accepts `EVAL_GOLD_PATH` so the R17.1a refusal test runs against an unreviewed temp copy; a second test checks that with the reviewed gold, `npm run eval` exits 2 (comparison not wired until T37) and leaves `docs/EVAL.md` unchanged.

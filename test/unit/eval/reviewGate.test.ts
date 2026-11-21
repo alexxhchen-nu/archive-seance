@@ -52,14 +52,16 @@ describe('npm run eval (R17.1a)', () => {
     expect(statSync(EVAL_MD).mtimeMs).toBe(mtime);
   });
 
-  it('with the committed (reviewed) gold, still writes no numbers until T37 wires the comparison', () => {
+  it('with the committed (reviewed) gold and no --predictions, exits 2 and writes no numbers', () => {
     const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as Record<string, unknown>;
     expect(isGoldReviewed(gold)).toBe(true);
     const before = readFileSync(EVAL_MD, 'utf8');
     const mtime = statSync(EVAL_MD).mtimeMs;
     const { status, stderr } = runEval();
     expect(status).toBe(2);
-    expect(stderr).toContain('not wired yet (T37)');
+    expect(stderr).toContain('No predictions file given');
+    expect(stderr).toContain('Export eval run');
+    expect(stderr).toContain('--predictions');
     expect(readFileSync(EVAL_MD, 'utf8')).toBe(before);
     expect(statSync(EVAL_MD).mtimeMs).toBe(mtime);
     expect(before).toMatch(/not yet measured/i);
