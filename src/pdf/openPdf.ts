@@ -3,9 +3,17 @@ import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import type { Config } from '../config/defaults';
 import { PdfLoadError } from './loadPdf';
 import type { PdfDocumentLike } from './PdfDocumentLike';
+import { extensionPdfjsDataUrls } from './pdfjsDataUrls';
+import type { PdfjsDataUrls } from './pdfjsDataUrls';
+
+export interface PdfjsGetDocumentParams extends Partial<PdfjsDataUrls> {
+  data: Uint8Array;
+  isEvalSupported: boolean;
+  cMapPacked?: boolean;
+}
 
 export interface PdfjsLike {
-  getDocument(src: { data: Uint8Array }): { promise: Promise<PdfDocumentLike>; destroy(): Promise<void> };
+  getDocument(src: PdfjsGetDocumentParams): { promise: Promise<PdfDocumentLike>; destroy(): Promise<void> };
   GlobalWorkerOptions?: { workerSrc: string };
 }
 
@@ -16,7 +24,8 @@ let workerConfigured = false;
 export async function openPdf(
   bytes: Uint8Array,
   cfg: Pick<Config, 'maxPdfPages'>,
-  pdfjsLib: PdfjsLike = defaultPdfjs as unknown as PdfjsLike
+  pdfjsLib: PdfjsLike = defaultPdfjs as unknown as PdfjsLike,
+  dataUrls: PdfjsDataUrls | undefined = extensionPdfjsDataUrls()
 ): Promise<OpenedPdf> {
   if (pdfjsLib === (defaultPdfjs as unknown) && !workerConfigured && defaultPdfjs.GlobalWorkerOptions) {
     defaultPdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
@@ -24,7 +33,8 @@ export async function openPdf(
   }
   // pdf.js transfers (detaches) the buffer it is given; keep the caller's bytes intact.
   // isEvalSupported is no longer in pdfjs-dist 6 typings; passing it is harmless and keeps intent explicit.
-  const params = { data: bytes.slice(), isEvalSupported: false };
+  const params: PdfjsGetDocumentParams = { data: bytes.slice(), isEvalSupported: false };
+  if (dataUrls) Object.assign(params, dataUrls, { cMapPacked: true });
   const task = pdfjsLib.getDocument(params);
   let proxy: PdfDocumentLike;
   try {

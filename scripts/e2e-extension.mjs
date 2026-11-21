@@ -75,6 +75,59 @@ async function pdfChecks(ctx, id, flavor) {
   check(`pdf: ${flavor} non-PDF clears counts`, (await page.locator('[data-testid="pdf-pages"], [data-testid="pdf-chunks"]').count()) === 0);
   check(`pdf: ${flavor} no page/console errors`, errors.length === 0, errors.join(' | '));
   await page.close();
+  await fontChecks(ctx, id, flavor);
+  await cacheChecks(ctx, id, flavor);
+}
+
+// Bundled pdf.js standard fonts and CMaps load under the MV3 CSP.
+async function fontChecks(ctx, id, flavor) {
+  const { page, errors } = await open(ctx, id);
+  const input = page.locator('[data-testid="pdf-file-input"]');
+  for (const name of ['times-roman-plain.pdf', 'cjk-unigb.pdf']) {
+    await input.setInputFiles(resolve('test/fixtures', name));
+    await page.waitForFunction((t) => document.querySelector('[data-testid="pdf-title"]')?.textContent === t, name, { timeout: 20000 });
+    const pages = (await text(page, 'pdf-pages')).trim();
+    check(`pdf-fonts: ${flavor}/${name} pages`, pages === `Pages: ${expectedFixtures[name].pages}`, pages);
+  }
+  check(`pdf-fonts: ${flavor} no page/console errors`, errors.length === 0, errors.join(' | '));
+  await page.close();
+}
+
+// IndexedDB page index survives a reload in the same persistent profile.
+async function cacheChecks(ctx, id, flavor) {
+  const name = 'mixed-scanned.pdf';
+  const exp = expectedFixtures[name];
+  const { page, errors } = await open(ctx, id);
+  const cached = page.locator('[data-testid="pdf-cached"]');
+  const load = async () => {
+    await page.locator('[data-testid="pdf-file-input"]').setInputFiles(resolve('test/fixtures', name));
+    await page.waitForFunction((t) => document.querySelector('[data-testid="pdf-title"]')?.textContent === t, name, { timeout: 20000 });
+  };
+  // Start from an empty cache: the earlier fixture loop already indexed this file.
+  await page.click('[data-testid="btn-clear-cache"]');
+  await page.waitForFunction(() => document.querySelector('[data-testid="pdf-status"]')?.textContent === 'Cleared cached documents.');
+  await load();
+  check(`pdf-cache: ${flavor} first load not from cache`, !(await cached.isVisible()));
+  await page.reload();
+  await page.waitForSelector('[data-testid="pdf-file-input"]');
+  await load();
+  await cached.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+  check(`pdf-cache: ${flavor} second load pages`, (await text(page, 'pdf-pages')).trim() === `Pages: ${exp.pages}`);
+  check(`pdf-cache: ${flavor} second load chunks`, (await text(page, 'pdf-chunks')).trim() === `Chunks: ${exp.chunkCountAtDefaultMax}`);
+  const nt = (await page.locator('[data-testid="pdf-no-text-page"]').allInnerTexts()).map((t) => t.trim());
+  const want = exp.noTextPages.map((n) => `Page ${n}: This page looks scanned (no text layer)`);
+  check(`pdf-cache: ${flavor} second load no-text entries`, JSON.stringify(nt) === JSON.stringify(want), JSON.stringify(nt));
+  const label = (await cached.isVisible()) ? (await cached.innerText()).trim() : '';
+  check(`pdf-cache: ${flavor} second load "Served from cache"`, label === 'Served from cache', label);
+  await shot(page, `pdf-${flavor}-cached.png`);
+  await page.click('[data-testid="btn-clear-cache"]');
+  await page.waitForFunction(() => document.querySelector('[data-testid="pdf-status"]')?.textContent === 'Cleared cached documents.');
+  await page.reload();
+  await page.waitForSelector('[data-testid="pdf-file-input"]');
+  await load();
+  check(`pdf-cache: ${flavor} after clear not from cache`, !(await cached.isVisible()));
+  check(`pdf-cache: ${flavor} no page/console errors`, errors.length === 0, errors.join(' | '));
+  await page.close();
 }
 
 // 1) Mock flavor: scripted Firebase AI Logic layer

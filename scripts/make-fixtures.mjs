@@ -19,16 +19,20 @@ function textStream(lines) {
   return ops.join('\n');
 }
 
-function buildPdf(pageStreams) {
+const HELVETICA = ['<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'];
+
+/** `fontObjs[0]` is the page font /F1 (object 3); later entries are objects it references (4, 5, ...). */
+function buildPdf(pageStreams, fontObjs = HELVETICA) {
   const objs = [];
   const n = pageStreams.length;
-  // 1 catalog, 2 pages, 3 font, then per page: page object, content stream.
-  const kids = pageStreams.map((_, i) => `${4 + i * 2} 0 R`).join(' ');
+  const first = 3 + fontObjs.length;
+  // 1 catalog, 2 pages, 3.. font objects, then per page: page object, content stream.
+  const kids = pageStreams.map((_, i) => `${first + i * 2} 0 R`).join(' ');
   objs.push('<< /Type /Catalog /Pages 2 0 R >>');
   objs.push(`<< /Type /Pages /Kids [${kids}] /Count ${n} >>`);
-  objs.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+  objs.push(...fontObjs);
   pageStreams.forEach((s, i) => {
-    objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + i * 2} 0 R >>`);
+    objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ${first + 1 + i * 2} 0 R >>`);
     objs.push(`<< /Length ${Buffer.byteLength(s, 'latin1')} >>\nstream\n${s}\nendstream`);
   });
   let out = '%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';
@@ -93,4 +97,19 @@ const mixed = [
 
 writeFileSync(join(outDir, 'harbor-lantern-minutes.pdf'), buildPdf(harbor.map(textStream)));
 writeFileSync(join(outDir, 'mixed-scanned.pdf'), buildPdf(mixed));
-console.log('wrote harbor-lantern-minutes.pdf, mixed-scanned.pdf');
+
+// Standard 14 Times-Roman, not embedded: pdf.js needs standardFontDataUrl to load a substitute.
+const TIMES = ['<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>'];
+writeFileSync(join(outDir, 'times-roman-plain.pdf'), buildPdf([textStream(['The Harbor Lantern Society convened at dusk.'])], TIMES));
+
+// Type0 font with a predefined UniGB CMap, no embedded program and no ToUnicode: decoding needs cMapUrl.
+const CJK = [
+  '<< /Type /Font /Subtype /Type0 /BaseFont /STSong-Light /Encoding /UniGB-UTF16-H /DescendantFonts [4 0 R] >>',
+  '<< /Type /Font /Subtype /CIDFontType0 /BaseFont /STSong-Light /CIDSystemInfo << /Registry (Adobe) /Ordering (GB1) /Supplement 0 >> /FontDescriptor 5 0 R /DW 1000 >>',
+  '<< /Type /FontDescriptor /FontName /STSong-Light /Flags 6 /FontBBox [-25 -254 1000 880] /ItalicAngle 0 /Ascent 880 /Descent -120 /CapHeight 880 /StemV 93 >>'
+];
+const utf16hex = (t) => Buffer.from(t, 'utf16le').swap16().toString('hex').toUpperCase();
+const cjkLines = ['港湾灯笼 Harbor Lantern Society', '港湾灯笼会议于黄昏召开。', '会员们在东码头点亮了十二盏铜灯。'];
+const cjkOps = cjkLines.map((t, k) => `BT /F1 14 Tf 1 0 0 1 56 ${760 - k * 20} Tm <${utf16hex(t)}> Tj ET`).join('\n');
+writeFileSync(join(outDir, 'cjk-unigb.pdf'), buildPdf([cjkOps], CJK));
+console.log('wrote harbor-lantern-minutes.pdf, mixed-scanned.pdf, times-roman-plain.pdf, cjk-unigb.pdf');

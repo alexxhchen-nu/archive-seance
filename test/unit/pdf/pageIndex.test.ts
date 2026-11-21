@@ -95,3 +95,37 @@ describe('buildPageIndex', () => {
     expect(progress.mock.calls).toEqual([[1, 3], [2, 3], [3, 3]]);
   });
 });
+
+describe('pdf.js data files (standard fonts, CMaps)', () => {
+  it.each([
+    ['times-roman-plain.pdf', 'The Harbor Lantern Society convened at dusk.'],
+    ['cjk-unigb.pdf', '港湾灯笼 Harbor Lantern Society 港湾灯笼会议于黄昏召开。 会员们在东码头点亮了十二盏铜灯。']
+  ])('%s: extracts the full phrase', async (name, phrase) => {
+    const doc = await openFixture(name);
+    try {
+      const [p] = await buildPageIndex(doc, 'd', DEFAULTS);
+      expect(p!.text).toContain(phrase);
+      expect(p!.status).toBe('ok');
+    } finally {
+      await doc.destroy();
+    }
+  });
+
+  it.each(['times-roman-plain.pdf', 'harbor-lantern-minutes.pdf'])('%s: no standardFontDataUrl warning when the data URLs are set', async (name) => {
+    const logged: string[] = [];
+    const spies = (['log', 'warn', 'error'] as const).map((m) =>
+      vi.spyOn(console, m).mockImplementation((...a: unknown[]) => { logged.push(a.map(String).join(' ')); })
+    );
+    try {
+      const doc = await openFixture(name);
+      try {
+        await buildPageIndex(doc, 'd', DEFAULTS);
+      } finally {
+        await doc.destroy();
+      }
+    } finally {
+      for (const s of spies) s.mockRestore();
+    }
+    expect(logged.join('\n')).not.toContain('standardFontDataUrl');
+  });
+});
