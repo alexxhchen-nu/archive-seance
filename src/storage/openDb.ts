@@ -1,4 +1,4 @@
-import { DB_NAME, SCHEMA_VERSION, STORE_CHUNKS, STORE_DOCUMENTS, STORE_PAGES } from './schema';
+import { DB_NAME, DB_VERSION, INDEX_MENTIONS_DOC, STORE_CHUNKS, STORE_DOCUMENTS, STORE_MENTIONS, STORE_PAGES } from './schema';
 
 /** Opens (and creates/migrates) the `seance` database. Raw IndexedDB; no `idb` dependency. */
 export function openSeanceDb(factory: IDBFactory = globalThis.indexedDB): Promise<IDBDatabase> {
@@ -7,7 +7,7 @@ export function openSeanceDb(factory: IDBFactory = globalThis.indexedDB): Promis
       reject(new Error('IndexedDB is not available'));
       return;
     }
-    const req = factory.open(DB_NAME, SCHEMA_VERSION);
+    const req = factory.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = (ev) => {
       const db = req.result;
       // v0 -> v1: first version, create the stores. Later versions add branches keyed on ev.oldVersion.
@@ -15,6 +15,9 @@ export function openSeanceDb(factory: IDBFactory = globalThis.indexedDB): Promis
         db.createObjectStore(STORE_DOCUMENTS, { keyPath: 'docId' });
         db.createObjectStore(STORE_PAGES, { keyPath: ['docId', 'page'] });
         db.createObjectStore(STORE_CHUNKS, { keyPath: 'docId' });
+      }
+      if (ev.oldVersion < 2) {
+        db.createObjectStore(STORE_MENTIONS, { keyPath: 'id' }).createIndex(INDEX_MENTIONS_DOC, 'docId', { unique: false });
       }
     };
     req.onsuccess = () => resolve(req.result);

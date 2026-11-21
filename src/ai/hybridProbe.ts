@@ -4,24 +4,10 @@ import type { HybridModeName, InferenceLogEntry, InferenceSourceTag } from '../t
 import { assertModeHonored, callModel } from './call';
 import type { GenerateLike } from './call';
 import { makeModel as realMakeModel } from './models';
+import { buildExtractionPrompt } from './prompts';
 
 export const SAMPLE_TEXT =
   'On 4 May 1952 the Harbor Commission chaired by Edith Marlow met with representatives of the Lantern Trading Company.';
-
-export function buildExtractionPrompt(chunkText: string): string {
-  return [
-    'You extract people and organizations from archival text.',
-    'Rules: Only use the text below. Copy "quote" verbatim from the text (one sentence or phrase containing the name).',
-    'Return JSON matching the schema. If nothing is present, return empty arrays. Do not guess.',
-    'Relation labels: employed-by, member-of, family, business-partner, met-with, communicated-with.',
-    'Only output a relation if a single sentence states it.',
-    '',
-    'TEXT:',
-    '<<<',
-    chunkText,
-    '>>>'
-  ].join('\n');
-}
 
 export interface ProbeEntity { name: string; type: 'person' | 'org'; quote: string }
 export interface ProbeRelation { subject: string; object: string; label: string; quote: string }

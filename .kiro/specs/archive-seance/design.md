@@ -289,7 +289,7 @@ If the SDK's `Schema` helper is required for `responseSchema` on the cloud side,
 
 ### 4.2 Storage
 
-- IndexedDB database `seance`: stores `documents`, `pages` (key `[docId,page]`), `chunks` (key `docId`), `mentions`, `relations`, `decisions`, `outbound`. All keyed by `docId` (PDF hash). Accessed through a small in-repo wrapper (`src/storage/`) instead of the `idb` library, to avoid a runtime dependency. Stores are created as their tasks land (v1: `documents`, `pages`, `chunks`); `SCHEMA_VERSION` is both the IDB version and the record format version, and a record with another version is a cache miss.
+- IndexedDB database `seance`: stores `documents`, `pages` (key `[docId,page]`), `chunks` (key `docId`), `mentions`, `relations`, `decisions`, `outbound`. All keyed by `docId` (PDF hash). Accessed through a small in-repo wrapper (`src/storage/`) instead of the `idb` library, to avoid a runtime dependency. Stores are created as their tasks land (v1: `documents`, `pages`, `chunks`; v2: `mentions`). `DB_VERSION` is the IDB open version (2); `RECORD_VERSION` (1) is the format version written into cached index records, and a record with another version is a cache miss. Adding a store bumps `DB_VERSION` only, so already-cached documents stay valid.
 - `chrome.storage.local`: settings (`sensitivity` per doc is in `documents`), consent flag per session in `chrome.storage.session`.
 - Nothing in `chrome.storage.sync`.
 
