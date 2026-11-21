@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run related tests on save",
+      "description": "After the agent saves a TypeScript source file, run the matching Vitest file. Draft: confirm trigger name via Ask Kiro (see README).",
+      "trigger": "PostFileSave",
+      "matcher": "^src/.*\\.ts$",
+      "action": { "type": "command", "command": "npx vitest related --run --passWithNoTests" },
+      "timeout": 120
+    }
+  ]
+}

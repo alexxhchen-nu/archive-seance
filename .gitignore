@@ -1,0 +1,21 @@
+# dependencies and build output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# secrets: Firebase config and App Check debug tokens live in untracked env files
+.env
+.env.*
+!.env.example
+
+# editor / OS noise
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# local test artifacts
+test-results/
+playwright-report/
+.e2e-profile/

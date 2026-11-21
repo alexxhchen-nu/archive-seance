@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Entity-merge property tests",
+      "description": "When merge, similarity, cluster, or confidence code changes, run the fast-check properties (symmetry, bounds, no chaining, threshold monotonicity, split honored).",
+      "trigger": "PostFileSave",
+      "matcher": "^src/graph/.*\\.ts$",
+      "action": { "type": "command", "command": "FC_NUM_RUNS=500 npx vitest run test/property/graph --reporter=dot" },
+      "timeout": 180
+    }
+  ]
+}
