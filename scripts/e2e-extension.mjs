@@ -66,7 +66,7 @@ await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
   check('mock/available: no page errors', errors.length === 0, errors.join(' | '));
   await page.close();
 
-  ({ page, errors } = await open(ctx, id, '?device=unavailable'));
+  ({ page } = await open(ctx, id, '?device=unavailable'));
   await page.click('[data-testid="btn-run-hybrid"]');
   await page.waitForFunction(() => document.querySelector('[data-testid="path-badge"]')?.textContent?.trim() === 'Ran in cloud');
   check('mock/unavailable: hybrid (prefer on-device) falls back -> "Ran in cloud"', true);
@@ -78,7 +78,7 @@ await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
   await shot(page, 'mock-unavailable-device-only-error.png');
   await page.close();
 
-  ({ page, errors } = await open(ctx, id, '?device=downloadable'));
+  ({ page } = await open(ctx, id, '?device=downloadable'));
   check('mock/downloadable: chip shows downloadable', /downloadable/i.test(await text(page, 'chip-device')));
   await page.click('[data-testid="btn-enable-device"]');
   await page.waitForFunction(() => /available/i.test(document.querySelector('[data-testid="chip-device"]')?.textContent ?? '') && !/downloadable/i.test(document.querySelector('[data-testid="chip-device"]')?.textContent ?? ''));
@@ -88,7 +88,7 @@ await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
 });
 
 // 2) Real build, no Firebase config: must render and explain what is missing, never call out
-await withExtension(resolve('dist'), async (ctx, id, sw) => {
+await withExtension(resolve('dist'), async (ctx, id) => {
   const { page, errors } = await open(ctx, id);
   const html = await page.content();
   check('real: no MOCK banner', !html.includes('MOCK'));

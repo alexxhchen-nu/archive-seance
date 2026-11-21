@@ -160,9 +160,11 @@ flowchart LR
 
 | 命令 | 作用 |
 |---|---|
+| `npm run dev` | 文件变化时重新构建 `dist/`（开发模式）。 |
 | `npm run build` | 先类型检查，再构建 `dist/`。 |
 | `npm run build:mock` | 用带脚本的 Firebase 层构建 `dist-mock/`。 |
 | `npm run typecheck` | 以严格模式运行 `tsc --noEmit`。 |
+| `npm run lint` | 运行 ESLint（flat config，typescript-eslint recommended）。 |
 | `npm test` | 运行 Vitest 单元测试和属性测试（10 个文件共 36 个测试）。 |
 | `npm run check:secrets` | 发现 API key 形态、debug token 字面量、被提交的 `.env*`，或 `.gitignore` 里出现 `.kiro` 时失败。 |
 | `npm run check:bundle-rhc` | 如果 `dist/` 里有远程 reCAPTCHA 或 Google API 脚本则失败（Chrome 应用商店 MV3 规则）。 |
