@@ -6,6 +6,9 @@ export interface Config {
   routeLocalChunkBudget: number;
   routeLongDocPages: number;
   crossPageMode: 'cloud_first' | 'local_only';
+  maxPdfMegabytes: number;
+  maxPdfPages: number;
+  minTextCharsPerPage: number;
 }
 
 export const DEFAULTS: Readonly<Config> = Object.freeze({
@@ -15,5 +18,8 @@ export const DEFAULTS: Readonly<Config> = Object.freeze({
   routeLocalMaxChunkChars: 6000,
   routeLocalChunkBudget: 60,
   routeLongDocPages: 30,
-  crossPageMode: 'cloud_first'
+  crossPageMode: 'cloud_first',
+  maxPdfMegabytes: 50,
+  maxPdfPages: 500,
+  minTextCharsPerPage: 40
 });
