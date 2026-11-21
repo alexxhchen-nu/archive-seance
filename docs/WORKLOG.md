@@ -5,6 +5,17 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
+## 2026-11-21 — T20 console demo (branch `t20-console-demo`, not merged)
+
+- **What was done**
+  - `src/app/consoleDemo.ts`: `runConsoleDemo` calls the existing `runExtraction` (local route, `cloudEnabled: false`) and `buildDemoPayload` merges with `buildEntities`. The payload (`archive-seance/console-demo@1`) has per entity: label, type, `status` solid|ghost, confidence, design 7.4 ghost opacity, member surfaces, evidence page + anchored quote, weakest link with score breakdown. It also carries the thresholds (source `defaults`), chunk counts, `droppedUnanchored` and relations (page + quote). No other document text.
+  - `src/app/panels/ConsoleDemoPanel.ts`: "Console demo (debug)" card on the existing app page (`app/index.html`). It has a **Summon** button, a list with `solid` / `ghost` classes (ghost: dashed border, opacity), a details view per entity, a JSON dump, and Copy JSON / Download JSON. In `main.ts` the Summon click checks availability and calls `enableDevice` (`initializeDeviceModel`) when the model is `downloadable`/`downloading` (R3.8).
+  - Mock build: `DEMO_SCRIPT` / `demoExtractionText` in `mockFirebase.ts` return verbatim quotes from `test/fixtures/eval/harbor-eval-minutes.pdf`, filtered to the chunk in the prompt. The probe's `MOCK_JSON` is unchanged. Expected result: "E. Marlow" + "Edith Marlow" form a ghost (name 0.88, context 0.5, total ≈ 0.77), and "Dr. Oswin Hale" (pages 1 and 3) is solid.
+  - Tests: `test/unit/app/consoleDemo.test.ts` (view-model against `buildEntities`, and the mock script on the real fixture via pdf.js with `droppedUnanchored === 0`). E2E: new `demo:` checks in `scripts/e2e-extension.mjs` (mock: solid + ghost classes and JSON schema; real: Summon without config shows the config-missing error).
+- **Narrow interpretation (no spec change):** the R7 ghost card's Confirm same / Split / Not sure and persistence by PDF hash are **deferred** (to T22/T24). The demo shows members, weakest link, score breakdown, evidence and thresholds read-only. The threshold source is always `defaults`, because there is no Remote Config yet.
+- **Tests (worktree after npm ci):** typecheck, lint, `npm test` 751 passed / 1 skipped, `npm run build`, `npm run build:mock`, e2e **62/62** (mock Summon: 2 solid, 1 ghost; JSON schema and class match; real Summon without config explains missing config), `check:secrets`, `check:bundle-rhc`. T20 ticked for mock acceptance only. M1 on a real demo PDF with on-device Gemini Nano still needs Alex to run it in Chrome. M1 is not claimed.
+- **Who:** Grok Workhorse (implementation); Grok Bot (review and verification).
+
 ## 2026-11-21 — PR #7: T37a wire the R17.2 comparison pass for `npm run eval` (open, not merged)
 
 - **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/7. Branch `t37a-eval-compare`, head `f6019d4`. **Stacked on PR #6** (`t17a-nhprc-gold`). Not merged, not pushed to main. T37 and T20 are not ticked. No accuracy, precision, recall or timing numbers were written; `docs/EVAL.md` still says “not yet measured”.

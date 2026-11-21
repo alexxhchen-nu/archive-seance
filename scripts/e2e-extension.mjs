@@ -130,6 +130,31 @@ async function cacheChecks(ctx, id, flavor) {
   await page.close();
 }
 
+// T20 console demo: open a synthetic fixture, Summon, check solid + ghost entities and the JSON dump.
+async function consoleDemoChecks(ctx, id) {
+  const { page, errors } = await open(ctx, id, '?device=available');
+  await page.locator('[data-testid="pdf-file-input"]').setInputFiles(resolve('test/fixtures/eval/harbor-eval-minutes.pdf'));
+  await page.waitForFunction(() => document.querySelector('[data-testid="pdf-title"]')?.textContent === 'harbor-eval-minutes.pdf', null, { timeout: 20000 });
+  await page.click('[data-testid="btn-summon"]');
+  await page.waitForFunction(() => document.querySelectorAll('[data-testid="demo-entity"]').length > 0 || (document.querySelector('[data-testid="demo-error"]')?.textContent ?? '').length > 0, null, { timeout: 20000 });
+  const solid = await page.locator('[data-testid="demo-entity"].solid').count();
+  const ghost = await page.locator('[data-testid="demo-entity"].ghost').count();
+  check('demo: mock Summon renders solid entities', solid > 0, `${solid}`);
+  check('demo: mock Summon renders ghost entities', ghost > 0, `${ghost}`);
+  let dump = null;
+  try { dump = JSON.parse(await text(page, 'demo-json')); } catch { /* reported below */ }
+  const ents = dump?.entities ?? [];
+  const okEntity = (e) => typeof e.label === 'string' && ['solid', 'ghost'].includes(e.status) && typeof e.confidence === 'number' &&
+    Array.isArray(e.evidence) && e.evidence.length > 0 && e.evidence.every((x) => Number.isInteger(x.page) && typeof x.quote === 'string' && x.quote.length > 0);
+  check('demo: JSON dump matches schema', dump?.schema === 'archive-seance/console-demo@1' && ents.length > 0 && ents.every(okEntity) &&
+    dump.thresholds?.mergeAutoThreshold === 0.92 && dump.thresholds?.mergeGhostThreshold === 0.6);
+  check('demo: JSON has solid and ghost', ents.some((e) => e.status === 'solid') && ents.some((e) => e.status === 'ghost'));
+  check('demo: JSON statuses match rendered classes', ents.filter((e) => e.status === 'solid').length === solid && ents.filter((e) => e.status === 'ghost').length === ghost);
+  await shot(page, 'mock-console-demo.png');
+  check('demo: no page/console errors', errors.length === 0, errors.join(' | '));
+  await page.close();
+}
+
 // 1) Mock flavor: scripted Firebase AI Logic layer
 await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
   check('mock: service worker registered', sw.url().endsWith('/background/sw.js'), sw.url());
@@ -169,6 +194,7 @@ await withExtension(resolve('dist-mock'), async (ctx, id, sw) => {
   await shot(page, 'mock-downloadable-enabled.png');
   await page.close();
 
+  await consoleDemoChecks(ctx, id);
   await pdfChecks(ctx, id, 'mock');
 });
 
@@ -182,6 +208,10 @@ await withExtension(resolve('dist'), async (ctx, id) => {
   for (const b of ['btn-run-device', 'btn-run-hybrid', 'btn-run-cloud']) {
     check(`real: ${b} disabled without config`, await page.locator(`[data-testid="${b}"]`).isDisabled());
   }
+  await page.click('[data-testid="btn-summon"]');
+  await page.waitForFunction(() => (document.querySelector('[data-testid="demo-error"]')?.textContent ?? '').length > 0);
+  const demoErr = await text(page, 'demo-error');
+  check('real: Summon without config explains missing config', /config missing/i.test(demoErr), demoErr);
   await shot(page, 'real-no-config.png');
   check('real: no page errors', errors.length === 0, errors.join(' | '));
   await page.close();

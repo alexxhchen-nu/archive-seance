@@ -28,3 +28,7 @@ pre { white-space: pre-wrap; font-size: 0.8rem; color: var(--muted); }
 footer { margin-top: 1.5rem; font-style: italic; }
 .badge.cloud { color: var(--cloud); }
 .warn { color: var(--accent); }
+.entities { list-style: none; padding: 0; }
+.entity { border: 1px solid var(--accent); border-radius: 4px; padding: 0.4rem 0.6rem; margin: 0.4rem 0; }
+.entity.ghost { border-style: dashed; border-color: var(--muted); }
+.entity.ghost .status { font-style: italic; }

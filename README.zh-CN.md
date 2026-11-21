@@ -132,7 +132,8 @@ flowchart LR
 | 针对已跟踪文件和 git 历史的密钥检查 | 已实现 | `npm run check:secrets`。 |
 | 真实的 Gemini Nano 推理 | **未验证** | 需要在受支持的机器上用 Chrome 139+ 并下载好模型。 |
 | 经 Firebase 和 App Check 的真实云端推理 | **未验证** | 需要开通 AI Logic 的 Firebase 项目和 App Check debug token。 |
-| PDF 加载、抽取流程、合并、D3 关系网、跳回原文 | 未实现 | 见[任务计划](.kiro/specs/archive-seance/tasks.md)。 |
+| PDF 加载、本地抽取与合并（控制台演示） | 已实现（mock 已验证） | 单元测试，以及在 `dist-mock/` 上用 `harbor-eval-minutes.pdf` 做的离线 Playwright e2e。真实设备上的 Nano 对演示 PDF 的抽取尚未验证（需 Alex 在 Chrome 中运行）。 |
+| D3 关系网、跳回原文 | 未实现 | 见[任务计划](.kiro/specs/archive-seance/tasks.md)（T22–T23）。 |
 
 ## 安装
 
@@ -145,6 +146,7 @@ flowchart LR
 3. 构建 mock 版：`npm run build:mock`。
 4. 打开 `chrome://extensions`，打开**开发者模式**，点击**加载已解压的扩展程序**，选择 `dist-mock/` 文件夹。
 5. 点击工具栏上的档案通灵板图标。在页面网址后加 `?device=unavailable`，可以模拟一台没有 Gemini Nano 的机器。
+6. 在 **Console demo (debug)** 中打开 `test/fixtures/eval/harbor-eval-minutes.pdf`，点击 **Summon**。应看到 solid / ghost 实体（置信度、页码和引文）和 JSON，以及 **Copy JSON** / **Download JSON**。
 
 **用你自己的 Firebase 项目运行。**
 
@@ -152,7 +154,7 @@ flowchart LR
 2. 把 `.env.example` 复制为 `.env.local`，填入 `VITE_FIREBASE_API_KEY`、`VITE_FIREBASE_PROJECT_ID` 和 `VITE_FIREBASE_APP_ID`。第一次先把 `VITE_APPCHECK_DEBUG_TOKEN` 留空。
 3. 运行 `npm run build`，把 `dist/` 作为已解压扩展加载。
 4. 打开应用页面和 DevTools 控制台。SDK 会打印一个 App Check debug token。到 **App Check → 应用 → 管理调试令牌**里登记它，再填进 `.env.local` 并重新构建。
-5. 点击 **Enable on-device AI**（需要时会下载 Gemini Nano），然后依次点三个运行按钮，查看标签。
+5. 需要时点击 **Enable on-device AI**（或直接点 **Summon**——这次点击也可以初始化模型），打开一份演示 PDF，在控制台演示卡片里点 **Summon**。三个 probe 按钮仍可用于练习混合模式。
 
 `.env.local` 已被 git 忽略。绝不要提交 debug token、API key 或服务账号密钥。
 

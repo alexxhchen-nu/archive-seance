@@ -21,6 +21,33 @@ const MOCK_JSON = JSON.stringify({
   ]
 });
 
+// Console demo (T20) script for test/fixtures/eval/harbor-eval-minutes.pdf. Every quote is a verbatim
+// span of that synthetic fixture. "E. Marlow" / "Edith Marlow" share a surname and initial (name 0.88),
+// which buildEntities scores as a ghost; "Dr. Oswin Hale" appears twice with identical tokens (solid).
+export const DEMO_SCRIPT = {
+  entities: [
+    { name: 'Edith Marlow', type: 'person', quote: 'Mrs. Edith Marlow chaired the meeting in the reading room' },
+    { name: 'Saltmarsh Historical Society', type: 'org', quote: 'a member of the Saltmarsh Historical Society since 1931' },
+    { name: 'Dr. Oswin Hale', type: 'person', quote: 'Dr. Oswin Hale reported on the damaged ledgers' },
+    { name: 'E. Marlow', type: 'person', quote: 'E. Marlow wrote to Dr. Oswin Hale in March' },
+    { name: 'Dr. Oswin Hale', type: 'person', quote: 'E. Marlow wrote to Dr. Oswin Hale in March' }
+  ],
+  relations: [
+    { subject: 'E. Marlow', object: 'Dr. Oswin Hale', label: 'communicated-with', quote: 'E. Marlow wrote to Dr. Oswin Hale in March' }
+  ]
+} as const;
+
+const fold = (s: string): string => s.replace(/\s+/gu, ' ').toLowerCase();
+
+/** Answers an extraction prompt with the DEMO_SCRIPT items whose quote occurs in that prompt's chunk. */
+export function demoExtractionText(prompt: string): string {
+  const p = fold(prompt);
+  const has = (q: string): boolean => p.includes(fold(q));
+  const entities = DEMO_SCRIPT.entities.filter((e) => has(e.quote));
+  const relations = DEMO_SCRIPT.relations.filter((r) => has(r.quote));
+  return JSON.stringify({ entities, relations });
+}
+
 export function parseMockDevice(search: string): MockDevice {
   const v = new URLSearchParams(search).get('device');
   return v === 'downloadable' || v === 'unavailable' || v === 'missing' ? v : 'available';
@@ -31,9 +58,9 @@ export function createMockFirebase(initial: MockDevice) {
   const ai = { app: { name: 'mock' } } as unknown as AI;
   const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  const build = (mode: InferenceMode): GenerateLike & DeviceInitLike => {
+  const build = (mode: InferenceMode, demo = false): GenerateLike & DeviceInitLike => {
     const model: GenerateLike & DeviceInitLike = {
-      async generateContent() {
+      async generateContent(prompt: string) {
         await delay(device === 'available' ? 120 : 300);
         let source: 'on_device' | 'in_cloud';
         if (mode === 'only_on_device') {
@@ -44,7 +71,8 @@ export function createMockFirebase(initial: MockDevice) {
         } else {
           source = 'in_cloud';
         }
-        return { response: { text: () => MOCK_JSON, inferenceSource: source } };
+        const text = demo ? demoExtractionText(prompt) : MOCK_JSON;
+        return { response: { text: () => text, inferenceSource: source } };
       },
       async initializeDeviceModel(onProgress) {
         if (device === 'unavailable' || device === 'missing') throw new Error('on-device model unavailable');
@@ -65,10 +93,12 @@ export function createMockFirebase(initial: MockDevice) {
     return { availability: device, hint: `MOCK: scripted availability "${device}".` };
   };
 
-  return { ai, makeModel, makeDeviceModel, probeAvailability };
+  const makeDemoModel = (): GenerateLike => build('only_on_device' as InferenceMode, true);
+
+  return { ai, makeModel, makeDeviceModel, makeDemoModel, probeAvailability };
 }
 
-export function createMockController(search: string): ProbeController & { evalModel: () => GenerateLike } {
+export function createMockController(search: string): ProbeController & { evalModel: () => GenerateLike; demoModel: () => GenerateLike } {
   const m = createMockFirebase(parseMockDevice(search));
   const cfg = { ...DEFAULTS };
   return {
@@ -79,6 +109,7 @@ export function createMockController(search: string): ProbeController & { evalMo
     probeAvailability: m.probeAvailability,
     enableDevice: (onProgress) => initDeviceModel(m.makeDeviceModel(), onProgress),
     run: (mode) => runHybridProbe({ ai: m.ai, cfg, makeModel: m.makeModel }, mode),
-    evalModel: () => m.makeModel(m.ai, 'extract', 'only_on_device' as InferenceMode, cfg)
+    evalModel: () => m.makeModel(m.ai, 'extract', 'only_on_device' as InferenceMode, cfg),
+    demoModel: () => m.makeDemoModel()
   };
 }
