@@ -10,6 +10,8 @@ export interface OpenPdfController {
   indexUrl(url: string): Promise<IndexSummary>;
   /** Must call chrome.permissions.request synchronously (user gesture). */
   requestPermission(url: string): Promise<boolean>;
+  /** Deletes every cached page index. */
+  clearCache?(): Promise<void>;
 }
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, string> = {}, text?: string): HTMLElementTagNameMap[K] {
@@ -34,8 +36,9 @@ export function mountOpenPdfPanel(root: HTMLElement, ctl: OpenPdfController): vo
   const status = el('p', { 'data-testid': 'pdf-status', role: 'status', 'aria-live': 'polite', class: 'meta' });
   const error = el('p', { 'data-testid': 'pdf-error', role: 'alert', class: 'error', hidden: '' });
   const result = el('div', { 'data-testid': 'pdf-result', hidden: '' });
+  const clearBtn = el('button', { type: 'button', 'data-testid': 'btn-clear-cache' }, 'Clear cached documents');
   card.append(el('div', { class: 'controls' }), status, error, result);
-  card.querySelector('.controls')!.append(label, input, allow);
+  card.querySelector('.controls')!.append(label, input, allow, clearBtn);
   root.append(card);
 
   let pendingUrl: string | undefined;
@@ -62,8 +65,11 @@ export function mountOpenPdfPanel(root: HTMLElement, ctl: OpenPdfController): vo
       el('p', { 'data-testid': 'pdf-hash', class: 'meta', title: s.docId }, s.docId.slice(0, 12)),
       ...s.noTextPages.map((n) => el('p', { 'data-testid': 'pdf-no-text-page', class: 'warn' }, `Page ${n}: This page looks scanned (no text layer)`))
     );
+    if (s.fromCache) result.append(el('p', { 'data-testid': 'pdf-cached', class: 'meta' }, 'Served from cache'));
     result.hidden = false;
-    status.textContent = `Indexed ${s.title}: ${s.pages} pages, ${s.chunks} chunks.`;
+    status.textContent = s.fromCache
+      ? `Served from cache: ${s.title}: ${s.pages} pages, ${s.chunks} chunks.`
+      : `Indexed ${s.title}: ${s.pages} pages, ${s.chunks} chunks.`;
   };
 
   const run = async (job: () => Promise<IndexSummary>): Promise<void> => {
@@ -88,6 +94,18 @@ export function mountOpenPdfPanel(root: HTMLElement, ctl: OpenPdfController): vo
     if (!file) return;
     pendingUrl = undefined;
     void run(() => ctl.indexFile(file));
+  });
+
+  clearBtn.addEventListener('click', async () => {
+    if (!ctl.clearCache) return;
+    try {
+      await ctl.clearCache();
+    } catch (e) {
+      showError(`Could not clear cached documents: ${e instanceof Error ? e.message : String(e)}`);
+      return;
+    }
+    result.querySelector('[data-testid="pdf-cached"]')?.remove();
+    status.textContent = 'Cleared cached documents.';
   });
 
   allow.addEventListener('click', async () => {

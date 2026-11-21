@@ -6,18 +6,21 @@ import { loadAndIndex } from './loadAndIndex';
 import { DEFAULTS } from '../config/defaults';
 import { loadPdfFromFile, loadPdfFromUrl, requestHostPermission } from '../pdf/loadPdf';
 import { openPdf } from '../pdf/openPdf';
+import { clearAll, getIndex, putIndex } from '../storage/indexCache';
 
 function mountPdf(root: HTMLElement): void {
   const cfg = DEFAULTS;
   const permissions = chrome.permissions;
   const open = (bytes: Uint8Array) => openPdf(bytes, cfg);
+  const cache = { getIndex: (id: string) => getIndex(id), putIndex: (i: Parameters<typeof putIndex>[0]) => putIndex(i) };
   const src = new URLSearchParams(location.search).get('src') ?? undefined;
   mountOpenPdfPanel(root, {
     cfg,
     ...(src ? { sourceUrl: src } : {}),
-    indexFile: (file) => loadAndIndex({ load: () => loadPdfFromFile(file, cfg), open }, cfg),
-    indexUrl: (url) => loadAndIndex({ load: () => loadPdfFromUrl(url, { fetch: (u, init) => fetch(u, init), permissions }, cfg), open }, cfg),
-    requestPermission: (url) => requestHostPermission(permissions, url)
+    indexFile: (file) => loadAndIndex({ load: () => loadPdfFromFile(file, cfg), open, cache }, cfg),
+    indexUrl: (url) => loadAndIndex({ load: () => loadPdfFromUrl(url, { fetch: (u, init) => fetch(u, init), permissions }, cfg), open, cache }, cfg),
+    requestPermission: (url) => requestHostPermission(permissions, url),
+    clearCache: () => clearAll()
   });
 }
 

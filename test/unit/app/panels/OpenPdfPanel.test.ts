@@ -11,7 +11,7 @@ const flush = () => new Promise((r) => setTimeout(r, 0));
 
 const summary: IndexSummary = {
   title: 'mixed-scanned.pdf', docId: 'abcdef0123456789'.repeat(4), pages: 3, chunks: 2,
-  noTextPages: [2], pageTexts: [], chunkList: []
+  noTextPages: [2], pageTexts: [], chunkList: [], fromCache: false
 };
 
 function ctl(over: Partial<OpenPdfController> = {}): OpenPdfController {
@@ -104,4 +104,33 @@ describe('OpenPdfPanel', () => {
     expect(q(root, 'pdf-error').textContent).toBe('Permission was not granted for https://a.example');
     expect(indexUrl).toHaveBeenCalledTimes(1);
   });
+
+  it('shows "Served from cache" only for cached results', async () => {
+    const root = mount(ctl({ indexFile: vi.fn(async () => ({ ...summary, fromCache: true })) }));
+    choose(root, new File(['x'], 'mixed-scanned.pdf'));
+    await flush();
+    expect(q(root, 'pdf-cached').textContent).toBe('Served from cache');
+    expect(q(root, 'pdf-status').textContent).toMatch(/^Served from cache: /);
+
+    const fresh = mount(ctl());
+    choose(fresh, new File(['x'], 'mixed-scanned.pdf'));
+    await flush();
+    expect(fresh.querySelector('[data-testid="pdf-cached"]')).toBeNull();
+    expect(q(fresh, 'pdf-status').textContent).toMatch(/^Indexed /);
+  });
+
+  it('clear button calls clearCache and removes the cached indicator, keeping the result', async () => {
+    const clearCache = vi.fn(async () => {});
+    const root = mount(ctl({ clearCache, indexFile: vi.fn(async () => ({ ...summary, fromCache: true })) }));
+    choose(root, new File(['x'], 'mixed-scanned.pdf'));
+    await flush();
+    const btn = q(root, 'btn-clear-cache');
+    expect(btn.textContent).toBe('Clear cached documents');
+    btn.click();
+    await flush();
+    expect(clearCache).toHaveBeenCalledTimes(1);
+    expect(root.querySelector('[data-testid="pdf-cached"]')).toBeNull();
+    expect(q(root, 'pdf-pages').textContent).toBe('Pages: 3');
+  });
 });
+

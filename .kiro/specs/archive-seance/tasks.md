@@ -30,6 +30,7 @@ Cut order if behind: R16 export → R15 multi-doc → R14 OCR → R11 Remote Con
 - [x] **T11 [11/22] Types and schemas** — `src/types/index.ts`, `src/ai/schemas.ts`, validators (hand-written or `ajv`), unit tests. Req: R3.2–3.3, design 4.
 - [x] **T12 [11/22] PDF loading** — `src/pdf/loadPdf.ts` (URL fetch with permission flow, local file input, size limit, SHA-256), host-permission button. Req: R1.1–1.5.
 - [x] **T13 [11/22] Page index** — `pageIndex.ts` with `itemOffsets`; `no-text` pages flagged. Tests with 2 fixture PDFs. Req: R2.1, R2.3.
+- [x] **T13b [11/22] Persist page index and bundle pdf.js font data** — IndexedDB `seance` cache of pages and chunks, keyed by SHA-256; schema version; clear/evict; "Served from cache" UI. Bundle pdfjs-dist standard_fonts, cmaps and wasm at build time and pass the URLs into getDocument. Req: R2.4 (page index only; mentions land in T17).
 - [x] **T14 [11/22] Chunker** — `chunker.ts` (Intl.Segmenter, max chars, never crosses pages) + property tests. Req: R2.2.
 - [ ] **T15 [11/22] Availability probe and models** — `src/ai/availability.ts`, `src/ai/firebase.ts`, `src/ai/models.ts`, `src/ai/call.ts` (timeout, retry, `inferenceSource` capture, privacy invariant). Req: R3.1, R3.6–3.7, R4.8, R12.1.
 - [ ] **T16 [11/22] Router** — `src/ai/router.ts` + exhaustive table test + property test "sensitive never cloud". Req: R4.1–4.7.
