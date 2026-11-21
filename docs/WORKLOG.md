@@ -5,9 +5,9 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
 
 ---
 
-## 2026-11-21 — T37a: wire the R17.2 comparison pass for `npm run eval` (open, not merged)
+## 2026-11-21 — PR #7: T37a wire the R17.2 comparison pass for `npm run eval` (open, not merged)
 
-- **Stacked on PR #6** (`t17a-nhprc-gold`). Not merged, not pushed. T37 and T20 are not ticked. No accuracy, precision, recall or timing numbers were written; `docs/EVAL.md` still says “not yet measured”.
+- **PR:** https://github.com/alexxhchen-nu/archive-seance/pull/7. Branch `t37a-eval-compare`, head `f6019d4`. **Stacked on PR #6** (`t17a-nhprc-gold`). Not merged, not pushed to main. T37 and T20 are not ticked. No accuracy, precision, recall or timing numbers were written; `docs/EVAL.md` still says “not yet measured”.
 - **What was done**
   - `src/eval/predictions.ts`: `buildPredictions` (pure; from `runExtraction` output, entities merged with `buildEntities`, only page + anchored quote + surface kept), `validatePredictions` (schema, fixtureId match, refuses `build.flavor: "mock"`), `scorePredictions` (calls `scoreEntities` / `scoreRelations` from `score.ts`).
   - `src/eval/evalDoc.ts`: replaces only the target mode's rows in the `docs/EVAL.md` table (idempotent; errors rather than appending if a row is missing).
@@ -15,7 +15,7 @@ Dated running log, newest entry first, one entry per pull request. Times are Ame
   - `scripts/eval.mjs`: R17.1a gate first (exit 1), then no `--predictions` exits 2 with export instructions, invalid file exits 3, mock run exits 4, else scores and writes rows. `EVAL_GOLD_PATH` kept; `EVAL_MD_PATH` added so tests use temp copies.
   - `docs/EVAL.md`: added “How to measure”.
 - **Narrow interpretations (no spec change):** entity scoring uses every exported mention surface (as the existing harness test does), not only merged labels. “cloud-enabled” sets `cloudEnabled: true` for routing, but `runExtraction` still only runs local chunks (cloud chunks are counted as pending-cloud) because the cloud extraction path is not built yet. Timing is wall-clock of the extraction call only (excludes PDF load/index). Export refuses a PDF whose SHA-256 is not the NHPRC file in `docs/DEMO_SOURCES.md`. Measurement dates are written in America/Chicago.
-- **Tests (worktree after npm ci):** typecheck, lint, `npm test` 747 passed / 1 skipped, `npm run build`, `npm run build:mock`, e2e 55/55, `check:secrets`, `check:bundle-rhc`. No accuracy numbers written; T37 still unticked.
+- **Tests (fresh clone `/tmp/as-verify-t37a` at `f6019d4`):** typecheck, lint, `npm test` 747 passed / 1 skipped, `npm run build`, `npm run build:mock`, e2e 55/55, `check:secrets`, `check:bundle-rhc`. No accuracy numbers written; T37 still unticked.
 - **Who:** Grok Workhorse (implementation); Grok Bot (review: SHA check, Chicago date, EVAL.md cloud-path note; verification).
 
 ## 2026-11-21 — PR #6 follow-up: Alex reviewed the NHPRC gold
