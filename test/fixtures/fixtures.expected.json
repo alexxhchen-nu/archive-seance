@@ -1,0 +1,16 @@
+{
+  "harbor-lantern-minutes.pdf": {
+    "pages": 3,
+    "noTextPages": [],
+    "chunkCountAtDefaultMax": 3,
+    "chunkCountAtMax400": 5
+  },
+  "mixed-scanned.pdf": {
+    "pages": 3,
+    "noTextPages": [
+      2
+    ],
+    "chunkCountAtDefaultMax": 2,
+    "chunkCountAtMax400": 2
+  }
+}
