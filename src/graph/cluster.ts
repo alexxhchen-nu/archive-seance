@@ -42,7 +42,7 @@ export function cluster(
   const effective = (a: string, b: string): number => {
     const k = pairKey(a, b);
     const d = decisions.get(k);
-    if (d === 'split') return -1;
+    if (d === 'split') return Number.NEGATIVE_INFINITY;
     if (d === 'confirmed') return 1;
     return scores.get(k)?.score.total ?? 0;
   };
@@ -62,12 +62,16 @@ export function cluster(
     let bi = -1;
     let bj = -1;
     let best = -Infinity;
+    let bestIds = '';
     for (let i = 0; i < n; i++) {
       if (!alive[i]) continue;
       for (let j = i + 1; j < n; j++) {
         if (!alive[j]) continue;
         const l = link[i]?.[j] ?? NEVER;
-        if (l > best) { best = l; bi = i; bj = j; }
+        if (l < best) continue;
+        // Design 7.3: ties broken by smallest sorted member id of the merged group.
+        const ids = [...(groups[i] ?? []), ...(groups[j] ?? [])].sort().join('\0');
+        if (l > best || bi < 0 || ids < bestIds) { best = l; bi = i; bj = j; bestIds = ids; }
       }
     }
     if (bi < 0 || best < cfg.mergeGhostThreshold) break;

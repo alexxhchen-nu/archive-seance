@@ -99,10 +99,12 @@ describe('decideRoute named cases', () => {
     expect(decideRoute({ kind: 'extract', chunkChars: 100 }, pub, spent, BASE).route).toBe('local');
     expect(decideRoute({ kind: 'extract', chunkChars: 100 }, { ...pub, pages: 31 }, spent, BASE).route).toBe('cloud');
   });
-  it('R4.5 cross-page prefers cloud, falls back to local offline', () => {
+  it('R4.5 cross-page prefers cloud, falls back to local offline; local_only never falls through to cloud', () => {
     expect(decideRoute({ kind: 'cross-page' }, pub, env, BASE).route).toBe('cloud');
     expect(decideRoute({ kind: 'cross-page' }, pub, { ...env, online: false }, BASE).route).toBe('local');
-    expect(decideRoute({ kind: 'cross-page' }, pub, env, { ...BASE, crossPageMode: 'local_only' }).route).toBe('local');
+    const only = { ...BASE, crossPageMode: 'local_only' as const };
+    expect(decideRoute({ kind: 'cross-page' }, pub, env, only).route).toBe('local');
+    expect(decideRoute({ kind: 'cross-page' }, pub, { ...env, localAvailability: 'unavailable' }, only).route).toBe('blocked');
   });
   it('R4.6 adjudication is local when available, else cloud', () => {
     expect(decideRoute({ kind: 'adjudicate' }, pub, env, BASE).route).toBe('local');

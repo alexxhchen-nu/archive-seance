@@ -42,7 +42,7 @@ export function decideRoute(task: Task, doc: DocInfo, env: Env, cfg: RouterConfi
       const fitsLocal = task.chunkChars <= cfg.routeLocalMaxChunkChars;
       const budgetLeft = env.localChunksUsed < cfg.routeLocalChunkBudget;
       const longDoc = doc.pages > cfg.routeLongDocPages;
-      /** Design 5.2 / R4.4: the local chunk budget only applies to documents longer than routeLongDocPages (R4.3 alone would apply it to every document). */
+      /** R4.3 / R4.4 / design 5.2: the local chunk budget only applies to documents longer than routeLongDocPages. */
       const withinBudget = budgetLeft || !longDoc;
       if (localOk && fitsLocal && withinBudget) return { route: 'local', reason: 'fits local limits' };
       if (cloudOk) {

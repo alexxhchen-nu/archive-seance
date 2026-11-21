@@ -58,6 +58,18 @@ describe('merge properties (design 7.6, R7.8)', () => {
     }), runs);
   });
 
+  it('3a. lowering mergeGhostThreshold never splits an existing cluster', () => {
+    fc.assert(fc.property(candidates, thresholds, fc.double({ min: 0, max: 0.2, noNaN: true }), (cs, [ghost, auto], delta) => {
+      const ps = scoreAll(cs);
+      const high = cluster(cs, ps, { mergeGhostThreshold: ghost, mergeAutoThreshold: auto });
+      const low = cluster(cs, ps, { mergeGhostThreshold: ghost - delta, mergeAutoThreshold: auto });
+      for (const c of high) {
+        const home = low.find((l) => l.keys.includes(c.keys[0] ?? ''));
+        for (const k of c.keys) expect(home?.keys).toContain(k);
+      }
+    }), runs);
+  });
+
   it('4. monotonic thresholds', () => {
     fc.assert(fc.property(candidates, thresholds, fc.double({ min: 0, max: 0.2, noNaN: true }), (cs, [ghost, auto], delta) => {
       const ps = scoreAll(cs);

@@ -50,4 +50,18 @@ describe('cluster', () => {
     expect(at(0.3816993464052288 - 2.8e-17)).toEqual([['k0', 'k1'], ['k2', 'k3']]);
     expect(at(0.1)).toEqual([['k0', 'k1', 'k2', 'k3']]);
   });
+
+  it('a split pair is cannot-link (linkage -Infinity) even with a high score', () => {
+    const ps = [pair('a', 'b', 0.99), pair('a', 'c', 0.99), pair('b', 'c', 0.99)];
+    const d = new Map<string, Decision>([[pairKey('a', 'b'), 'split']]);
+    expect(keys(cluster(items('a', 'b', 'c'), ps, DEFAULTS, d))).toEqual([['a', 'c'], ['b']]);
+  });
+  it('equal linkage prefers the merge whose sorted member ids are smaller (design 7.3 tie-break)', () => {
+    // a-b and a-c both 0.7; b-c is 0.4, so only one pair can merge at ghost 0.5.
+    // [a,b] < [a,c], so the result must be {a,b} {c}, not {a,c} {b}.
+    const ps = [pair('a', 'b', 0.7), pair('a', 'c', 0.7), pair('b', 'c', 0.4)];
+    const cfg = { mergeGhostThreshold: 0.5, mergeAutoThreshold: 0.92 };
+    expect(keys(cluster(items('c', 'b', 'a'), ps, cfg))).toEqual([['a', 'b'], ['c']]);
+    expect(keys(cluster(items('a', 'b', 'c'), [...ps].reverse(), cfg))).toEqual([['a', 'b'], ['c']]);
+  });
 });
